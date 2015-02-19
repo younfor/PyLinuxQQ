@@ -6,6 +6,7 @@ import re
 import cookielib
 import spidermonkey
 import json
+import time
 
 
 class PyLinuxQQ(object):
@@ -26,6 +27,8 @@ class PyLinuxQQ(object):
     ptwebqq = ''
     newvfwebqq = ''
     psessionid = ''
+    info_hash = ''
+    clientid = '53999199'
 
     def __init__(self, username, password):
         super(PyLinuxQQ, self).__init__()
@@ -100,7 +103,7 @@ class PyLinuxQQ(object):
         data = urllib2.urlopen(req).read()
         ck = dict((c.name, c.value) for c in self.cookies)
         if ck['ptwebqq']:
-            #print 'ptwebqq:', ck['ptwebqq']
+            # print 'ptwebqq:', ck['ptwebqq']
             self.ptwebqq = ck['ptwebqq']
         print 'ptwebqq:', self.ptwebqq
         print 'login 2'
@@ -141,8 +144,47 @@ class PyLinuxQQ(object):
         self.psessionid = data['result']['psessionid']
         print 'psessionid:', self.psessionid
 
+    def get_infoHash(self):
+        # get_hash
+        sm = spidermonkey.Runtime()
+        file_js = open("infoHash.js", "r")
+        cx = sm.new_context()
+        get_hash = cx.execute(file_js.read())
+        self.info_hash = get_hash(self.username, self.ptwebqq)
+        print 'info_hash:', self.info_hash
+
+    def get_friends(self):
+        url_post = 'http://s.web2.qq.com/api/get_user_friends2'
+        data_post = {
+            'r': '{"vfwebqq":"' + self.newvfwebqq + '","hash":"' + self.info_hash + '"}'
+        }
+        req = urllib2.Request(url_post, data=urllib.urlencode(data_post))
+        req.add_header(
+            'Referer', 'http://s.web2.qq.com/proxy.html?v=20130916001&callback=1&id=1')
+        data = json.load(urllib2.urlopen(req))
+        print data['result']['friends']
+
+    def update_poll(self):
+        url = 'http://d.web2.qq.com/channel/poll2'
+        data_poll = {
+            'r': '{"ptwebqq":"' + self.ptwebqq + '","clientid":"' + self.clientid + '",\
+            "psessionid":"' + self.psessionid + '","key":""}'
+        }
+        req = urllib2.Request(url, data=urllib.urlencode(data_poll))
+        req.add_header(
+            'Referer', 'http://d.web2.qq.com/proxy.html?v=20130916001&callback=1&id=2')
+        data = json.load(urllib2.urlopen(req))
+        if data['retcode']==0:
+            print data['result'][0]['value']['content']
+        else:
+            print 'update poll'
 if __name__ == "__main__":
     qq = PyLinuxQQ('28762822', '199288@920808')
     qq.login_sig()
     qq.login_check()
     qq.login_on()
+    qq.get_infoHash()
+    qq.get_friends()
+    while True:
+        time.sleep(10)
+        qq.update_poll()
