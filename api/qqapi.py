@@ -7,6 +7,7 @@ import cookielib
 import spidermonkey
 import json
 import time
+import random
 
 
 class PyLinuxQQ(object):
@@ -170,8 +171,14 @@ class PyLinuxQQ(object):
         req.add_header(
             'Referer', 'http://s.web2.qq.com/proxy.html?v=20130916001&callback=1&id=1')
         data = json.load(urllib2.urlopen(req))
-        print data['result']['friends']
-
+        return data['result']
+    def get_face(self,uin='1599524561'):
+        url = 'http://face%s'%random.randint(1,9)+'.web.qq.com/cgi/svr/face/getface?cache=1&type=1&f=40&uin=%s'%uin+'&vfwebqq=%s'%self.newvfwebqq
+        req = urllib2.Request(url)
+        data=urllib2.urlopen(req).read()
+        f=open('aaa.jpg','wb')
+        f.write(data)
+        f.close()
     def update_poll(self):
         url = 'http://d.web2.qq.com/channel/poll2'
         data_poll = {

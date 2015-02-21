@@ -1,11 +1,40 @@
 # coding=utf-8
 from PyQt4 import QtCore, QtGui
 from gui.gui import Ui_login
+from gui.guiMain import Ui_Main
 from api.qqapi import PyLinuxQQ
 import sys
 import thread
 
+# api
 qq = PyLinuxQQ('', '')
+# window
+qqmain = None
+# data
+data_friends = None
+
+# get friendslist
+
+def load_data(main):
+    global data_friends
+    qq.get_infoHash()
+    qq.get_face()
+    data_friends=qq.get_friends()
+    main.signal.emit(0)
+
+class qqMain(QtGui.QMainWindow, QtCore.QObject):
+
+    signal = QtCore.pyqtSignal(int)
+    def __init__(self, parent=None):
+        QtGui.QWidget.__init__(self, parent)
+        thread.start_new_thread(load_data, (self,))
+        self.signal.connect(self.execute)
+        self.ui = Ui_Main()
+        self.ui.setupUi(self)
+        self.show()
+    def execute(self,arg):
+        if arg==0:
+            self.ui.setupFriend(data_friends)
 
 # login
 
@@ -27,23 +56,31 @@ def check_pwd(username, pwd, code, login):
     qq.code1 = code
     if qq.login_on() == True:
         print 'login success'
+        login.signal_exit.emit()
     else:
         print 'login failed'
         login.signal_reLogin.emit()
 
 
-class Login(QtGui.QMainWindow, QtCore.QObject):
+class qqLogin(QtGui.QMainWindow, QtCore.QObject):
 
     hasCode = False
     signal_showCode = QtCore.pyqtSignal()
     signal_reLogin = QtCore.pyqtSignal()
+    signal_exit = QtCore.pyqtSignal()
 
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
-        thread.start_new_thread(start_api,())
+        thread.start_new_thread(start_api, ())
         self.signal_showCode.connect(self.showCode)
         self.signal_reLogin.connect(self.reLogin)
+        self.signal_exit.connect(self.startMain)
         self.loginGui()
+
+    def startMain(self):
+        self.close()
+        global qqmain
+        qqmain = qqMain()
 
     def reLogin(self):
         self.hideCode()
@@ -54,6 +91,8 @@ class Login(QtGui.QMainWindow, QtCore.QObject):
     def loginGui(self):
         self.ui = Ui_login()
         self.ui.setupUi(self)
+        self.ui.text_user.setText(u'28762822')
+        #self.ui.text_pwd.setText(u'199288@920808')
         self.hideCode()
         self.show()
         print 'start login'
@@ -106,8 +145,7 @@ class Login(QtGui.QMainWindow, QtCore.QObject):
         self.ui.text_code.show()
         self.ui.img_code.show()
 
-# get friendslist
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
-    myqq = Login()
+    qqlogin = qqLogin()
     sys.exit(app.exec_())
