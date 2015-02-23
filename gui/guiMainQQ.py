@@ -76,8 +76,9 @@ class Ui_Main(object):
         self.scrollArea = QtGui.QScrollArea(self.tab_2)
         self.scrollArea.setGeometry(QtCore.QRect(0, 7, 261, 361))
         self.scrollArea.setWidgetResizable(False)
-        self.toolBox = QtGui.QToolBox(self.scrollArea)
-        self.toolBox.setGeometry(QtCore.QRect(0, 7, 261, 361))
+        self.toolBox = QtGui.QToolBox()
+        self.scrollArea.setWidget(self.toolBox)
+        self.toolBox.setGeometry(QtCore.QRect(0, 7, 238, 600))
         self.toolBox.setCurrentIndex(0)
         self.tabWidget.addTab(self.tab_2, _fromUtf8("    好   友   "))
         # 群组
@@ -87,7 +88,6 @@ class Ui_Main(object):
         self.tabWidget.addTab(self.tab_3, _fromUtf8("    群   组   "))
         self.tabWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(Main)
-
     def setupFriend(self, data):
         # categories
         if data['categories'][0]['index']==0:
@@ -95,25 +95,34 @@ class Ui_Main(object):
         else:
             self.listWidget = {0:QtGui.QListWidget()}
             self.toolBox.addItem(self.listWidget[0], _fromUtf8('我的好友'))
-            self.listWidget[0].setGeometry(QtCore.QRect(0, 1, 261, 301))
+            self.listWidget[0].setGeometry(QtCore.QRect(0, 1, 238, 301))
         for cat in data['categories']:
             
             self.listWidget[cat['index']]=QtGui.QListWidget()
             self.toolBox.addItem(self.listWidget[cat['index']], _fromUtf8(cat['name']))
-            self.listWidget[cat['index']].setGeometry(QtCore.QRect(0, 1, 261, 301))
-            self.listWidget[cat['index']].setMinimumSize(QtCore.QSize(200, 0))
+            self.listWidget[cat['index']].setGeometry(QtCore.QRect(0, 1, 238, 301))
+            #self.listWidget[cat['index']].setMinimumSize(QtCore.QSize(200, 0))
         # widget
         loc=-1
         for user in data['friends']:
             loc+=1
             self.item, self.widget = self.createWidget(loc,self.listWidget[user['categories']],data['info'][loc]['nick'])
             self.listWidget[user['categories']].setItemWidget(self.item, self.widget)
+        # size
+        self.maxsize=0
+        for cat in data['categories']:
+            size=len(self.listWidget[cat['index']])
+            print size
+            if self.maxsize<size:
+                self.maxsize=size
+            self.listWidget[cat['index']].setMinimumSize(QtCore.QSize( 0,size*50))
+        #self.toolBox.setMinimumSize(QtCore.QSize(0,361+self.maxsize*50))
 
     def createWidget(self,loc,listWidget, title):
         self.listWidgetItem = QtGui.QListWidgetItem(listWidget)
         self.listWidgetItem.setSizeHint(QtCore.QSize(0, 48))
         self.widget = QtGui.QWidget()
-        self.widget.setGeometry(QtCore.QRect(0, 0, 261, 51))
+        self.widget.setGeometry(QtCore.QRect(0, 0, 238, 51))
         self.graphicsView = QtGui.QGraphicsView(self.widget)
         self.graphicsView.setGeometry(QtCore.QRect(10, 7, 38, 38))
         self.lbl_title = QtGui.QLabel(self.widget)
@@ -121,7 +130,7 @@ class Ui_Main(object):
         self.lbl_title.setFont(self.font2)
         self.lbl_title.setText(_translate("Main", title, None))
         self.lbl_comment = QtGui.QLabel(self.widget)
-        self.lbl_comment.setGeometry(QtCore.QRect(70, 30, 191, 18))
+        self.lbl_comment.setGeometry(QtCore.QRect(70, 30, 181, 18))
         self.lbl_comment.setText(_translate("Main", '[在线]', None))
         self.lbl_comment.setFont(self.font3)
         return self.listWidgetItem, self.widget
