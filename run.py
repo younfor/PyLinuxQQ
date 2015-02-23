@@ -1,7 +1,7 @@
 # coding=utf-8
 from PyQt4 import QtCore, QtGui
 from gui.gui import Ui_login
-from gui.guiMain import Ui_Main
+from gui.guiMainQQ import Ui_Main
 from api.qqapi import PyLinuxQQ
 import sys
 import thread
@@ -18,7 +18,7 @@ data_friends = None
 def load_data(main):
     global data_friends
     qq.get_infoHash()
-    qq.get_face()
+    #qq.get_face()
     data_friends=qq.get_friends()
     main.signal.emit(0)
 
@@ -34,6 +34,7 @@ class qqMain(QtGui.QMainWindow, QtCore.QObject):
         self.show()
     def execute(self,arg):
         if arg==0:
+            print 'arg',arg
             self.ui.setupFriend(data_friends)
 
 # login
@@ -148,4 +149,5 @@ class qqLogin(QtGui.QMainWindow, QtCore.QObject):
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
     qqlogin = qqLogin()
+    #aa=qqMain()
     sys.exit(app.exec_())
