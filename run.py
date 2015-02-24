@@ -15,16 +15,29 @@ data_friends = None
 
 # get friendslist
 
+
 def load_data(main):
     global data_friends
     qq.get_infoHash()
-    #qq.get_face()
-    data_friends=qq.get_friends()
+    data_friends = qq.get_friends()
+    # friends
     main.signal.emit(0)
+    main.signal.emit(2)
+    # faces
+    size = 0
+    for user in data_friends['friends']:
+        size += 1
+        if size % 20 == 0:
+            main.signal.emit(2)
+        qq.get_face(str(user['uin']))
+        print 'loadding face..', user['uin']
+    main.signal.emit(1)
+
 
 class qqMain(QtGui.QMainWindow, QtCore.QObject):
 
     signal = QtCore.pyqtSignal(int)
+
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
         thread.start_new_thread(load_data, (self,))
@@ -32,10 +45,15 @@ class qqMain(QtGui.QMainWindow, QtCore.QObject):
         self.ui = Ui_Main()
         self.ui.setupUi(self)
         self.show()
-    def execute(self,arg):
-        if arg==0:
-            print 'arg',arg
+
+    def execute(self, arg):
+        if arg == 0:
+            print 'arg', arg
             self.ui.setupFriend(data_friends)
+        if arg == 2:
+            self.ui.setupFace(self, data_friends, False)
+        if arg == 1:
+            self.ui.setupFace(self, data_friends)
 
 # login
 
@@ -93,7 +111,7 @@ class qqLogin(QtGui.QMainWindow, QtCore.QObject):
         self.ui = Ui_login()
         self.ui.setupUi(self)
         self.ui.text_user.setText(u'28762822')
-        #self.ui.text_pwd.setText(u'199288@920808')
+        # self.ui.text_pwd.setText(u'199288@920808')
         self.hideCode()
         self.show()
         print 'start login'
@@ -149,5 +167,5 @@ class qqLogin(QtGui.QMainWindow, QtCore.QObject):
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
     qqlogin = qqLogin()
-    #aa=qqMain()
+    # aa=qqMain()
     sys.exit(app.exec_())

@@ -8,7 +8,7 @@ import spidermonkey
 import json
 import time
 import random
-
+import os
 
 class PyLinuxQQ(object):
 
@@ -173,10 +173,13 @@ class PyLinuxQQ(object):
         data = json.load(urllib2.urlopen(req))
         return data['result']
     def get_face(self,uin='1599524561'):
+        if os.path.exists('tmp/head/'+uin+'.jpg'):
+            print 'exist uin',uin
+            return
         url = 'http://face%s'%random.randint(1,9)+'.web.qq.com/cgi/svr/face/getface?cache=1&type=1&f=40&uin=%s'%uin+'&vfwebqq=%s'%self.newvfwebqq
         req = urllib2.Request(url)
         data=urllib2.urlopen(req).read()
-        f=open('aaa.jpg','wb')
+        f=open('tmp/head/'+uin+'.jpg','wb')
         f.write(data)
         f.close()
     def update_poll(self):

@@ -234,6 +234,9 @@
          <height>151</height>
         </rect>
        </property>
+       <property name="horizontalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOff</enum>
+       </property>
        <property name="widgetResizable">
         <bool>true</bool>
        </property>
@@ -254,8 +257,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>100</width>
-        <height>30</height>
+        <width>92</width>
+        <height>22</height>
        </rect>
       </property>
       <attribute name="label">
@@ -267,5 +270,22 @@
   </widget>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>toolBox</sender>
+   <signal>currentChanged(int)</signal>
+   <receiver>toolBox</receiver>
+   <slot>showMaximized()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>132</x>
+     <y>329</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>132</x>
+     <y>329</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

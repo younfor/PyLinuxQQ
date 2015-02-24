@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'gui/guiMain.ui'
 #
-# Created: Mon Feb 23 23:00:39 2015
+# Created: Tue Feb 24 13:58:32 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -101,6 +101,7 @@ class Ui_Main(object):
         self.label_2.setObjectName(_fromUtf8("label_2"))
         self.scrollArea = QtGui.QScrollArea(self.page)
         self.scrollArea.setGeometry(QtCore.QRect(50, 100, 171, 151))
+        self.scrollArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
@@ -109,7 +110,7 @@ class Ui_Main(object):
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.toolBox.addItem(self.page, _fromUtf8(""))
         self.page_2 = QtGui.QWidget()
-        self.page_2.setGeometry(QtCore.QRect(0, 0, 100, 30))
+        self.page_2.setGeometry(QtCore.QRect(0, 0, 92, 22))
         self.page_2.setObjectName(_fromUtf8("page_2"))
         self.toolBox.addItem(self.page_2, _fromUtf8(""))
         self.tabWidget.addTab(self.tab_2, _fromUtf8(""))
@@ -117,6 +118,7 @@ class Ui_Main(object):
         self.retranslateUi(Main)
         self.tabWidget.setCurrentIndex(1)
         self.toolBox.setCurrentIndex(0)
+        QtCore.QObject.connect(self.toolBox, QtCore.SIGNAL(_fromUtf8("currentChanged(int)")), self.toolBox.showMaximized)
         QtCore.QMetaObject.connectSlotsByName(Main)
 
     def retranslateUi(self, Main):
