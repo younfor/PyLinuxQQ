@@ -12,26 +12,38 @@ qq = PyLinuxQQ('', '')
 qqmain = None
 # data
 data_friends = None
-
+account = None
+lnick = None
+online = None
 # get friendslist
 
 
 def load_data(main):
-    global data_friends
+    global data_friends,account, lnick,online
+    #get hash
     qq.get_infoHash()
+    #get friends
     data_friends = qq.get_friends()
-    # friends
+    #get selfinfo
+    data = qq.get_self_info()
+    account = data['account']
+    lnick = data['lnick']
+    main.signal.emit(3)
+    #get onlinebody
+    online = qq.get_online_uin()
+    print 'online',online
     main.signal.emit(0)
-    main.signal.emit(2)
+    #get face
+    qq.get_face(str(account))
+    main.signal.emit(1)
     # faces
     size = 0
     for user in data_friends['friends']:
         size += 1
-        if size % 20 == 0:
-            main.signal.emit(2)
         qq.get_face(str(user['uin']))
+        if size % 20 == 0:
+            main.signal.emit(1)
         print 'loadding face..', user['uin']
-    main.signal.emit(1)
 
 
 class qqMain(QtGui.QMainWindow, QtCore.QObject):
@@ -48,12 +60,11 @@ class qqMain(QtGui.QMainWindow, QtCore.QObject):
 
     def execute(self, arg):
         if arg == 0:
-            print 'arg', arg
-            self.ui.setupFriend(data_friends)
-        if arg == 2:
-            self.ui.setupFace(self, data_friends, False)
+            self.ui.setupFriend(data_friends,online)
         if arg == 1:
             self.ui.setupFace(self, data_friends)
+        if arg == 3:
+            self.ui.setupSelf(self, account, lnick)
 
 # login
 

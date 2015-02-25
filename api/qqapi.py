@@ -130,8 +130,6 @@ class PyLinuxQQ(object):
             req.add_header(
                 'Referer', 'http://d.web2.qq.com/proxy.html?v=20130916001&callback=1&id=2')
             data = json.load(urllib2.urlopen(req))
-            if data['retcode']==0:
-                return True
             print 'login post'
             '''
             {"retcode":0,
@@ -149,6 +147,8 @@ class PyLinuxQQ(object):
             '''
             self.psessionid = data['result']['psessionid']
             print 'psessionid:', self.psessionid
+            if data['retcode']==0:
+                return True
         except Exception,e:
             print e
             return False
@@ -171,6 +171,22 @@ class PyLinuxQQ(object):
         req.add_header(
             'Referer', 'http://s.web2.qq.com/proxy.html?v=20130916001&callback=1&id=1')
         data = json.load(urllib2.urlopen(req))
+        return data['result']
+    def get_online_uin(self):
+        url='http://d.web2.qq.com/channel/get_online_buddies2?vfwebqq='+self.newvfwebqq+'&clientid='+self.clientid+'&psessionid='+self.psessionid+'&t=1424840879328'
+        print url
+        req=urllib2.Request(url)
+        req.add_header(
+            'Referer', 'http://d.web2.qq.com/proxy.html?v=20130916001&callback=1&id=2')
+        data=json.load(urllib2.urlopen(req))
+        print 'retcode',data['retcode']
+        return data['result']
+    def get_self_info(self):
+        url='http://s.web2.qq.com/api/get_self_info2?t=1424840878871'
+        req=urllib2.Request(url)
+        req.add_header(
+            'Referer', 'http://s.web2.qq.com/proxy.html?v=20130916001&callback=1&id=1')
+        data=json.load(urllib2.urlopen(req))
         return data['result']
     def get_face(self,uin='1599524561'):
         if os.path.exists('tmp/head/'+uin+'.jpg'):

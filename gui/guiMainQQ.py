@@ -8,7 +8,7 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-import json
+import json,os
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
@@ -51,12 +51,10 @@ class Ui_Main(object):
         self.img_head = QtGui.QGraphicsView(Main)
         self.img_head.setGeometry(QtCore.QRect(10, 10, 71, 61))
         self.lbl_head = QtGui.QLabel(Main)
-        self.lbl_head.setGeometry(QtCore.QRect(110, 17, 131, 21))
+        self.lbl_head.setGeometry(QtCore.QRect(90, 17, 131, 21))
         self.lbl_head.setFont(self.font1)
-        self.lbl_head.setText(_translate("Main", "稻草人", None))
         self.lbl_content = QtGui.QLabel(Main)
-        self.lbl_content.setGeometry(QtCore.QRect(110, 50, 151, 18))
-        self.lbl_content.setText(_translate("Main", "悄悄留下，生肖别离", None))
+        self.lbl_content.setGeometry(QtCore.QRect(90, 50, 151, 18))
         self.text_search = QtGui.QLineEdit(Main)
         self.text_search.setGeometry(QtCore.QRect(0, 80, 268, 28))
         self.text_search.setPlaceholderText(
@@ -89,14 +87,21 @@ class Ui_Main(object):
         self.tabWidget.addTab(self.tab_3, _fromUtf8("    群   组   "))
         self.tabWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(Main)
-
-    def setupFace(self, main,data,flag=True):
+    def setupSelf(self,main,account,lnick):
+        pixmap = QtGui.QPixmap()
+        pixmap.load('tmp/head/' + str(account) + '.jpg')
+        scene = QtGui.QGraphicsScene(main)
+        item = QtGui.QGraphicsPixmapItem(pixmap)
+        scene.addItem(item)
+        self.img_head.setScene(scene)
+        self.lbl_head.setText(_translate("Main", str(account), None))
+        self.lbl_content.setText(_translate("Main", lnick, None))
+    def setupFace(self, main,data):
         
         for i in range(len(data['friends'])):
+            name = str(data['friends'][i]['uin'])
             pixmap = QtGui.QPixmap()
-            if flag == True:
-                name = str(data['friends'][i]['uin'])
-            else:
+            if not os.path.exists('tmp/head/'+name+'.jpg'):
                 name = 'qq'
             pixmap.load('tmp/head/' + name + '.jpg')
             scene = QtGui.QGraphicsScene(main)
@@ -105,7 +110,7 @@ class Ui_Main(object):
             self.graphicsView[i].setScene(scene)
             self.graphicsView[i].resize(50,50)
 
-    def setupFriend(self, data):
+    def setupFriend(self, data,online):
         # categories
         if data['categories'][0]['index'] == 0:
             self.listWidget = {}
@@ -119,13 +124,30 @@ class Ui_Main(object):
                 self.listWidget[cat['index']], _fromUtf8(cat['name']))
             self.listWidget[cat['index']].setGeometry(
                 QtCore.QRect(0, 1, 238, 301))
+        # markname  
+        self.uindict={}
+        for mark in data['marknames']:
+            info=[mark['markname'],None,None]
+            self.uindict[mark['uin']]=info
+        # online
+        for on in online:
+            u=self.uindict.get(on['uin'])
+            if u is None:
+                info=[None,True,None]
+                self.uindict[on['uin']]=info
+            else:
+                u[1]=True
         # widget
         loc = -1
         self.graphicsView = {}
         for user in data['friends']:
             loc += 1
+            if self.uindict.get(user['uin']):
+                markname=self.uindict.get(user['uin'])[0]
+            else:
+                markname=None
             self.item, self.widget = self.createWidget(
-                loc, self.listWidget[user['categories']], data['info'][loc]['nick'])
+                loc, self.listWidget[user['categories']], data['info'][loc]['nick'],markname,user['uin'])
             self.listWidget[user['categories']].setItemWidget(
                 self.item, self.widget)
         # size
@@ -138,7 +160,7 @@ class Ui_Main(object):
         self.toolBox.resize(QtCore.QSize(250,self.toolsize[0]*48+len(self.toolsize)*34))
     def onToolBoxChanged(self,index):
         self.toolBox.resize(QtCore.QSize(250,self.toolsize[index]*48+len(self.toolsize)*34))
-    def createWidget(self, loc, listWidget, title):
+    def createWidget(self, loc, listWidget, title,markname,uin):
         self.listWidgetItem = QtGui.QListWidgetItem(listWidget)
         self.listWidgetItem.setSizeHint(QtCore.QSize(0, 48))
         self.widget = QtGui.QWidget()
@@ -148,9 +170,15 @@ class Ui_Main(object):
         self.lbl_title = QtGui.QLabel(self.widget)
         self.lbl_title.setGeometry(QtCore.QRect(60, 10, 181, 18))
         self.lbl_title.setFont(self.font2)
+        if markname is not None:
+            title=markname+'('+title+')'
         self.lbl_title.setText(_translate("Main", title, None))
         self.lbl_comment = QtGui.QLabel(self.widget)
         self.lbl_comment.setGeometry(QtCore.QRect(60, 30, 181, 18))
-        self.lbl_comment.setText(_translate("Main", '[在线]', None))
+        info=self.uindict.get(uin)
+        if info and info[1]:
+            self.lbl_comment.setText(_translate("Main", '[在线]', None))
+        else:
+            self.lbl_comment.setText(_translate("Main", '[离线]', None))
         self.lbl_comment.setFont(self.font3)
         return self.listWidgetItem, self.widget
