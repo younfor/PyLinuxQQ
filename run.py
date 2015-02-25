@@ -2,6 +2,7 @@
 from PyQt4 import QtCore, QtGui
 from gui.gui import Ui_login
 from gui.guiMainQQ import Ui_Main
+from gui.guiChat import Ui_Chat
 from api.qqapi import PyLinuxQQ
 import sys
 import thread
@@ -19,21 +20,21 @@ online = None
 
 
 def load_data(main):
-    global data_friends,account, lnick,online
-    #get hash
+    global data_friends, account, lnick, online
+    # get hash
     qq.get_infoHash()
-    #get friends
+    # get friends
     data_friends = qq.get_friends()
-    #get selfinfo
+    # get selfinfo
     data = qq.get_self_info()
     account = data['account']
     lnick = data['lnick']
     main.signal.emit(3)
-    #get onlinebody
+    # get onlinebody
     online = qq.get_online_uin()
-    print 'online',online
+    print 'online', online
     main.signal.emit(0)
-    #get face
+    # get face
     qq.get_face(str(account))
     main.signal.emit(1)
     # faces
@@ -60,7 +61,7 @@ class qqMain(QtGui.QMainWindow, QtCore.QObject):
 
     def execute(self, arg):
         if arg == 0:
-            self.ui.setupFriend(data_friends,online)
+            self.ui.setupFriend(data_friends, online)
         if arg == 1:
             self.ui.setupFace(self, data_friends)
         if arg == 3:
@@ -175,8 +176,19 @@ class qqLogin(QtGui.QMainWindow, QtCore.QObject):
         self.ui.text_code.show()
         self.ui.img_code.show()
 
+# chat
+
+
+class qqChat(QtGui.QMainWindow, QtCore.QObject):
+
+    def __init__(self, parent=None):
+        QtGui.QWidget.__init__(self, parent)
+        self.ui = Ui_Chat()
+        self.ui.setupUi(self)
+        self.show()
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
-    qqlogin = qqLogin()
+    #qqlogin = qqLogin()
     # aa=qqMain()
+    aa=qqChat()
     sys.exit(app.exec_())

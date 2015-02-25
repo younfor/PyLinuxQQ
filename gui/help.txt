@@ -1,3 +1,4 @@
 /usr/lib/python2.7/site-packages/PyQt4/uic/pyuic.py
 python /usr/lib/python2.7/site-packages/PyQt4/uic/pyuic.py -o gui.py gui.ui
 python /usr/lib/python2.7/site-packages/PyQt4/uic/pyuic.py -o gui/guiMain.py gui/guiMain.ui
+python /usr/lib/python2.7/site-packages/PyQt4/uic/pyuic.py -o gui/guiChat.py gui/guiChat.ui
