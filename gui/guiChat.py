@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'gui/guiChat.ui'
 #
-# Created: Wed Feb 25 21:11:06 2015
+# Created: Thu Feb 26 13:56:18 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,16 +17,13 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
-
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
-
 class Ui_Chat(object):
-
     def setupUi(self, Chat):
         Chat.setObjectName(_fromUtf8("Chat"))
         Chat.resize(575, 524)
@@ -38,16 +35,13 @@ class Ui_Chat(object):
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(255, 0, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(
-            QtGui.QPalette.Active, QtGui.QPalette.WindowText, brush)
+        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.WindowText, brush)
         brush = QtGui.QBrush(QtGui.QColor(255, 0, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(
-            QtGui.QPalette.Inactive, QtGui.QPalette.WindowText, brush)
+        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.WindowText, brush)
         brush = QtGui.QBrush(QtGui.QColor(143, 145, 146))
         brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(
-            QtGui.QPalette.Disabled, QtGui.QPalette.WindowText, brush)
+        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.WindowText, brush)
         self.pushButton.setPalette(palette)
         font = QtGui.QFont()
         font.setFamily(_fromUtf8("Liberation Mono"))
@@ -116,8 +110,7 @@ class Ui_Chat(object):
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 463, 383))
-        self.scrollAreaWidgetContents.setObjectName(
-            _fromUtf8("scrollAreaWidgetContents"))
+        self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.listWidget = QtGui.QListWidget(self.scrollAreaWidgetContents)
         self.listWidget.setGeometry(QtCore.QRect(0, 0, 471, 391))
         self.listWidget.setObjectName(_fromUtf8("listWidget"))
@@ -129,6 +122,7 @@ class Ui_Chat(object):
         self.graphicsView_3.setObjectName(_fromUtf8("graphicsView_3"))
         self.label_3 = QtGui.QLabel(self.widget)
         self.label_3.setGeometry(QtCore.QRect(60, 20, 401, 18))
+        self.label_3.setTextFormat(QtCore.Qt.AutoText)
         self.label_3.setObjectName(_fromUtf8("label_3"))
         self.widget_2 = QtGui.QWidget(self.scrollAreaWidgetContents)
         self.widget_2.setGeometry(QtCore.QRect(0, 80, 471, 61))
@@ -139,9 +133,14 @@ class Ui_Chat(object):
         self.label_4 = QtGui.QLabel(self.widget_2)
         self.label_4.setGeometry(QtCore.QRect(10, 20, 401, 18))
         self.label_4.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.label_4.setAlignment(
-            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
+        self.label_4.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.label_4.setObjectName(_fromUtf8("label_4"))
+        self.textBrowser = QtGui.QTextBrowser(self.scrollAreaWidgetContents)
+        self.textBrowser.setGeometry(QtCore.QRect(80, 180, 256, 81))
+        self.textBrowser.setMinimumSize(QtCore.QSize(0, 40))
+        self.textBrowser.setSizeIncrement(QtCore.QSize(0, 10))
+        self.textBrowser.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.textBrowser.setObjectName(_fromUtf8("textBrowser"))
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.stackedWidget.addWidget(self.page)
         self.page_2 = QtGui.QWidget()
@@ -161,5 +160,9 @@ class Ui_Chat(object):
         self.pushButton_3.setText(_translate("Chat", "发送", None))
         self.label_3.setText(_translate("Chat", "你好啊！", None))
         self.label_4.setText(_translate("Chat", "你好啊！", None))
-        self.pushButton.setStyleSheet("QPushButton{color:red;}")
-        self.label_3.setStyleSheet("QLabel{background-color:gray;}")
+        self.textBrowser.setHtml(_translate("Chat", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'WenQuanYi Micro Hei\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">你好啊,<img src=\"/home/younfor/project/PyLinuxQQ/tmp/head/qq.jpg\" />,嘿嘿</p></body></html>", None))
+

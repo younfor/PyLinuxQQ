@@ -2,7 +2,7 @@
 from PyQt4 import QtCore, QtGui
 from gui.gui import Ui_login
 from gui.guiMainQQ import Ui_Main
-from gui.guiChat import Ui_Chat
+from gui.guiChatQQ import Ui_Chat
 from api.qqapi import PyLinuxQQ
 import sys
 import thread
