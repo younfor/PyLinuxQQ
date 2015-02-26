@@ -220,7 +220,9 @@ class Ui_Main(object):
         chat_msg=''
         for i in range(1,len(msg['content'])):
             if type(msg['content'][i]) is list:
-                chat_msg+=':face-'+str(msg['content'][i][1])+':'
+                chat_msg+='<img src="tmp/face/'+str(msg['content'][i][1])+'.gif" />'
+                main.loadFace(str(msg['content'][i][1]))
+                print 'loadface:',str(msg['content'][i][1])
             else:
                 chat_msg+=msg['content'][i]
         print chat_from_uin,':',chat_msg

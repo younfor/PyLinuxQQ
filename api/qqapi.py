@@ -198,6 +198,16 @@ class PyLinuxQQ(object):
         f=open('tmp/head/'+uin+'.jpg','wb')
         f.write(data)
         f.close()
+    def get_happyface(self,id):
+        url='http://pub.idqqimg.com/lib/qqface/'+str(id)+'.gif'
+        if os.path.exists('tmp/face/'+str(id)+'.gif'):
+            print 'exist face ',id
+            return
+        req = urllib2.Request(url)
+        data=urllib2.urlopen(req).read()
+        f=open('tmp/face/'+str(id)+'.gif','wb')
+        f.write(data)
+        f.close()
     def get_poll(self):
         url = 'http://d.web2.qq.com/channel/poll2'
         data_poll = {

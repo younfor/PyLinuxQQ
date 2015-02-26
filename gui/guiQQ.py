@@ -71,7 +71,7 @@ class Ui_login(object):
         self.img_code.setObjectName(_fromUtf8("img_code"))
 
         self.retranslateUi(login)
-        QtCore.QObject.connect(self.text_pwd, QtCore.SIGNAL(_fromUtf8("textChanged(QString)")), login.loadCode)
+        QtCore.QObject.connect(self.text_user, QtCore.SIGNAL(_fromUtf8("editingFinished()")), login.loadCode)
         QtCore.QObject.connect(self.btn_login, QtCore.SIGNAL(_fromUtf8("clicked()")), login.checkLogin)
         QtCore.QObject.connect(self.btn_cancel, QtCore.SIGNAL(_fromUtf8("clicked()")), login.close)
         QtCore.QMetaObject.connectSlotsByName(login)

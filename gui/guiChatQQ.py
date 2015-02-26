@@ -162,6 +162,8 @@ class Ui_Chat(object):
             self.label.setGeometry(QtCore.QRect(10, 5, 390, 50))
             self.label.setAlignment(QtCore.Qt.AlignRight)
             self.label.setLayoutDirection(QtCore.Qt.LeftToRight)
+        # msg edit
+
         content = u'''
 <html><body>''' + chat_msg + '''</body></html>
         '''

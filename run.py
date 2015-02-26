@@ -1,6 +1,6 @@
 # coding=utf-8
 from PyQt4 import QtCore, QtGui
-from gui.gui import Ui_login
+from gui.guiQQ import Ui_login
 from gui.guiMainQQ import Ui_Main
 from gui.guiChatQQ import Ui_Chat
 from api.qqapi import PyLinuxQQ
@@ -88,14 +88,17 @@ class qqMain(QtGui.QMainWindow, QtCore.QObject):
             self.ui.setupSelf(self, account, lnick)
         if arg == 4:
             self.ui.openChat(self, opened,qqchat,message)
+    def loadFace(self,id):
+        qq.get_happyface(id)
 # login
 
 
 def start_api():
-    qq.login_sig()
+    pass
 
 
 def check_user(username, login):
+    qq.login_sig()
     qq.username = username
     if qq.login_check() == True:
         print 'check code True'
@@ -145,7 +148,7 @@ class qqLogin(QtGui.QMainWindow, QtCore.QObject):
         self.ui = Ui_login()
         self.ui.setupUi(self)
         self.ui.text_user.setText(u'28762822')
-        # self.ui.text_pwd.setText(u'199288@920808')
+        self.ui.text_pwd.setText(u'199288@920808')
         self.hideCode()
         self.show()
         print 'start login'
@@ -164,9 +167,6 @@ class qqLogin(QtGui.QMainWindow, QtCore.QObject):
 
     def loadCode(self):
         # check user
-        if self.hasCode == True:
-            return
-        self.hasCode = True
         uname = str(self.ui.text_user.text())
         print uname
         thread.start_new_thread(check_user, (uname, self))
@@ -209,7 +209,6 @@ class qqChat(QtGui.QMainWindow, QtCore.QObject):
         self.ui.setupUi(self)
         self.show()
 if __name__ == '__main__':
-    global qqchat
     app = QtGui.QApplication(sys.argv)
     qqlogin = qqLogin()
     qqchat = qqChat()
