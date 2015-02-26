@@ -6,16 +6,20 @@ from gui.guiChatQQ import Ui_Chat
 from api.qqapi import PyLinuxQQ
 import sys
 import thread
+import time
 
 # api
 qq = PyLinuxQQ('', '')
 # window
 qqmain = None
+qqchat = None
+opened = False
 # data
 data_friends = None
 account = None
 lnick = None
 online = None
+message = None
 # get friendslist
 
 
@@ -47,6 +51,20 @@ def load_data(main):
         print 'loadding face..', user['uin']
 
 
+def load_msg(main):
+    global message
+    while True:
+        time.sleep(0.5)
+        data = qq.get_poll()
+        if data is not None:
+            print 'msg coming'
+            if data[0]['poll_type'] == 'message':
+                print 'user message'
+                message = data[0]['value']
+                main.signal.emit(4)
+        else:
+            print 'msg none'
+
 class qqMain(QtGui.QMainWindow, QtCore.QObject):
 
     signal = QtCore.pyqtSignal(int)
@@ -54,19 +72,22 @@ class qqMain(QtGui.QMainWindow, QtCore.QObject):
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
         thread.start_new_thread(load_data, (self,))
+        thread.start_new_thread(load_msg, (self,))
         self.signal.connect(self.execute)
         self.ui = Ui_Main()
         self.ui.setupUi(self)
         self.show()
 
     def execute(self, arg):
+        global opened,qqchat
         if arg == 0:
             self.ui.setupFriend(data_friends, online)
         if arg == 1:
             self.ui.setupFace(self, data_friends)
         if arg == 3:
             self.ui.setupSelf(self, account, lnick)
-
+        if arg == 4:
+            self.ui.openChat(self, opened,qqchat,message)
 # login
 
 
@@ -117,6 +138,7 @@ class qqLogin(QtGui.QMainWindow, QtCore.QObject):
         self.hideCode()
         self.ui.btn_login.setEnabled(True)
         self.ui.btn_login.setText(u'登陆')
+        self.ui.text_pwd.setText(u'')
         self.hasCode = False
 
     def loginGui(self):
@@ -187,8 +209,8 @@ class qqChat(QtGui.QMainWindow, QtCore.QObject):
         self.ui.setupUi(self)
         self.show()
 if __name__ == '__main__':
+    global qqchat
     app = QtGui.QApplication(sys.argv)
-    #qqlogin = qqLogin()
-    # aa=qqMain()
-    aa=qqChat()
+    qqlogin = qqLogin()
+    qqchat = qqChat()
     sys.exit(app.exec_())

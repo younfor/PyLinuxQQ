@@ -198,7 +198,7 @@ class PyLinuxQQ(object):
         f=open('tmp/head/'+uin+'.jpg','wb')
         f.write(data)
         f.close()
-    def update_poll(self):
+    def get_poll(self):
         url = 'http://d.web2.qq.com/channel/poll2'
         data_poll = {
             'r': '{"ptwebqq":"' + self.ptwebqq + '","clientid":"' + self.clientid + '",\
@@ -209,9 +209,9 @@ class PyLinuxQQ(object):
             'Referer', 'http://d.web2.qq.com/proxy.html?v=20130916001&callback=1&id=2')
         data = json.load(urllib2.urlopen(req))
         if data['retcode']==0:
-            print data['result'][0]['value']['content']
+            return data['result']
         else:
-            print 'update poll'
+            return None
 '''
 if __name__ == "__main__":
     qq = PyLinuxQQ('28762822', 'xxx')

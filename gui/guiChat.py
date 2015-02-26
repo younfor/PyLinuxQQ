@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'gui/guiChat.ui'
 #
-# Created: Thu Feb 26 13:56:18 2015
+# Created: Thu Feb 26 17:50:54 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -29,6 +29,8 @@ class Ui_Chat(object):
         Chat.resize(575, 524)
         self.groupBox = QtGui.QGroupBox(Chat)
         self.groupBox.setGeometry(QtCore.QRect(0, 0, 111, 521))
+        self.groupBox.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBox.setCheckable(False)
         self.groupBox.setObjectName(_fromUtf8("groupBox"))
         self.pushButton = QtGui.QPushButton(self.groupBox)
         self.pushButton.setGeometry(QtCore.QRect(0, 0, 101, 27))
@@ -113,6 +115,7 @@ class Ui_Chat(object):
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.listWidget = QtGui.QListWidget(self.scrollAreaWidgetContents)
         self.listWidget.setGeometry(QtCore.QRect(0, 0, 471, 391))
+        self.listWidget.setSpacing(2)
         self.listWidget.setObjectName(_fromUtf8("listWidget"))
         self.widget = QtGui.QWidget(self.scrollAreaWidgetContents)
         self.widget.setGeometry(QtCore.QRect(0, 10, 471, 61))
@@ -135,12 +138,26 @@ class Ui_Chat(object):
         self.label_4.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.label_4.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.label_4.setObjectName(_fromUtf8("label_4"))
+        self.listWidget_2 = QtGui.QListWidget(self.widget_2)
+        self.listWidget_2.setGeometry(QtCore.QRect(120, 40, 256, 192))
+        self.listWidget_2.setObjectName(_fromUtf8("listWidget_2"))
         self.textBrowser = QtGui.QTextBrowser(self.scrollAreaWidgetContents)
         self.textBrowser.setGeometry(QtCore.QRect(80, 180, 256, 81))
         self.textBrowser.setMinimumSize(QtCore.QSize(0, 40))
         self.textBrowser.setSizeIncrement(QtCore.QSize(0, 10))
         self.textBrowser.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.textBrowser.setObjectName(_fromUtf8("textBrowser"))
+        self.toolBox = QtGui.QToolBox(self.scrollAreaWidgetContents)
+        self.toolBox.setGeometry(QtCore.QRect(320, 240, 64, 128))
+        self.toolBox.setObjectName(_fromUtf8("toolBox"))
+        self.page_3 = QtGui.QWidget()
+        self.page_3.setGeometry(QtCore.QRect(0, 0, 64, 64))
+        self.page_3.setObjectName(_fromUtf8("page_3"))
+        self.toolBox.addItem(self.page_3, _fromUtf8(""))
+        self.page_4 = QtGui.QWidget()
+        self.page_4.setGeometry(QtCore.QRect(0, 0, 64, 64))
+        self.page_4.setObjectName(_fromUtf8("page_4"))
+        self.toolBox.addItem(self.page_4, _fromUtf8(""))
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.stackedWidget.addWidget(self.page)
         self.page_2 = QtGui.QWidget()
@@ -148,6 +165,7 @@ class Ui_Chat(object):
         self.stackedWidget.addWidget(self.page_2)
 
         self.retranslateUi(Chat)
+        self.toolBox.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(Chat)
 
     def retranslateUi(self, Chat):
@@ -165,4 +183,6 @@ class Ui_Chat(object):
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'WenQuanYi Micro Hei\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">你好啊,<img src=\"/home/younfor/project/PyLinuxQQ/tmp/head/qq.jpg\" />,嘿嘿</p></body></html>", None))
+        self.toolBox.setItemText(self.toolBox.indexOf(self.page_3), _translate("Chat", "Page 1", None))
+        self.toolBox.setItemText(self.toolBox.indexOf(self.page_4), _translate("Chat", "Page 2", None))
 

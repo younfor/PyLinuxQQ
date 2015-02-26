@@ -198,3 +198,30 @@ class Ui_Main(object):
             self.lbl_comment.setText(_translate("Main", '[离线]', None))
         self.lbl_comment.setFont(self.font3)
         return self.listWidgetItem, self.widget
+    def openChat(self,main,opened,qqchat,msg):
+        '''
+        content: [["font", {size: 10, color: "000000", style: [0, 0, 0], name: "宋体"}], "你好啊，", ["face", 3], "嘿嘿 "]
+        0: ["font", {size: 10, color: "000000", style: [0, 0, 0], name: "宋体"}]
+        1: "你好啊，"
+        2: ["face", 3]
+        3: "嘿嘿 "
+        from_uin: 603579481
+        msg_id: 54156
+        msg_id2: 138519
+        msg_type: 9
+        reply_ip: 176488600
+        time: 1424938754
+        to_uin: 28762822
+        '''
+        if opened==False:
+            opened==True
+            qqchat.show()
+        chat_from_uin=msg['from_uin']
+        chat_msg=''
+        for i in range(1,len(msg['content'])):
+            if type(msg['content'][i]) is list:
+                chat_msg+=':face-'+str(msg['content'][i][1])+':'
+            else:
+                chat_msg+=msg['content'][i]
+        print chat_from_uin,':',chat_msg
+        qqchat.ui.createMsg(self,chat_from_uin,chat_msg)
