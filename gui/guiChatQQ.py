@@ -65,7 +65,7 @@ class Ui_Chat(object):
         self.sideButton[uin] = QtGui.QPushButton()
         self.sideButton[uin].setGeometry(QtCore.QRect(0, 0, 101, 27))
         self.sideButton[uin].setText(_translate("Chat", title, None))
-        self.sideButton[uin].setStyleSheet("QPushButton{color:black;}")
+        self.sideButton[uin].setStyleSheet("QPushButton{color:red;}")
         self.button_item = QtGui.QListWidgetItem(self.listWidget_Users)
         self.button_item.setSizeHint(QtCore.QSize(0, 30))
         self.listWidget_Users.setItemWidget(
@@ -77,7 +77,7 @@ class Ui_Chat(object):
     def sideButtonOnClick(self, uin):
         print 'uin-click:', uin
         self.stackedWidget.setCurrentWidget(self.stack[uin])
-
+        self.sideButton[uin].setStyleSheet("QPushButton{color:black;}")
     def createMsg(self, main, chat_from_uin, chat_msg):
         # check new
         if self.stack.get(chat_from_uin) is None:
@@ -86,10 +86,14 @@ class Ui_Chat(object):
             self.createSideButton(
                 chat_from_uin, main.userdict[chat_from_uin]['nickname'])
             print 'add user:', chat_from_uin
+        # change color tips
+        if self.stackedWidget.currentWidget()!=self.stack[chat_from_uin]:
+            self.sideButton[chat_from_uin].setStyleSheet("QPushButton{color:red;}")
         # add msg
         self.item, self.widget = self.createWidget(
             0, self.listWidget[chat_from_uin], chat_msg,chat_from_uin)
         self.listWidget[chat_from_uin].setItemWidget(self.item, self.widget)
+        self.listWidget[chat_from_uin].scrollToBottom()
 
     def createImg(self,uin):
         name = str(uin)
