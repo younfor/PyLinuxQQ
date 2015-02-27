@@ -28,6 +28,7 @@ except AttributeError:
 class Ui_Chat(object):
 
     def setupUi(self, Chat):
+        self.main=Chat
         Chat.setWindowTitle(_translate("Chat", "聊天", None))
         Chat.resize(575, 524)
         # font
@@ -55,7 +56,8 @@ class Ui_Chat(object):
         self.stack = {}
         self.listWidget = {}
         self.sideButton = {}
-
+        self.button_send = {}
+        self.textEdit = {}
         QtCore.QMetaObject.connectSlotsByName(Chat)
         # test
         #self.createMsg()
@@ -90,10 +92,11 @@ class Ui_Chat(object):
         if self.stackedWidget.currentWidget()!=self.stack[chat_from_uin]:
             self.sideButton[chat_from_uin].setStyleSheet("QPushButton{color:red;}")
         # add msg
-        self.item, self.widget = self.createWidget(
-            0, self.listWidget[chat_from_uin], chat_msg,chat_from_uin)
-        self.listWidget[chat_from_uin].setItemWidget(self.item, self.widget)
-        self.listWidget[chat_from_uin].scrollToBottom()
+        if chat_msg is not None:
+            self.item, self.widget = self.createWidget(
+                0, self.listWidget[chat_from_uin], chat_msg,chat_from_uin)
+            self.listWidget[chat_from_uin].setItemWidget(self.item, self.widget)
+            self.listWidget[chat_from_uin].scrollToBottom()
 
     def createImg(self,uin):
         name = str(uin)
@@ -135,18 +138,36 @@ class Ui_Chat(object):
         line_1.setFrameShape(QtGui.QFrame.HLine)
         line_1.setFrameShadow(QtGui.QFrame.Sunken)
         # send
-        self.textEdit = QtGui.QTextEdit(self.page)
-        self.textEdit.setGeometry(QtCore.QRect(0, 450, 391, 71))
-        self.button_send = QtGui.QPushButton(self.page)
-        self.button_send.setGeometry(QtCore.QRect(392, 450, 81, 71))
-        self.button_send.setText(_translate("Chat", "发送", None))
+        self.textEdit[chat_from_uin] = QtGui.QTextEdit(self.page)
+        self.textEdit[chat_from_uin].setGeometry(QtCore.QRect(0, 450, 391, 71))
+        self.button_send[chat_from_uin] = QtGui.QPushButton(self.page)
+        self.button_send[chat_from_uin].setGeometry(QtCore.QRect(392, 450, 81, 71))
+        self.button_send[chat_from_uin].setText(_translate("Chat", "发送", None))
+        self.button_send[chat_from_uin].clicked.connect(
+            functools.partial(self.sendButtonOnClick, chat_from_uin))
         # chat
         self.listWidget[chat_from_uin] = QtGui.QListWidget(self.page)
+        self.listWidget[chat_from_uin].setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.listWidget[chat_from_uin].setGeometry(
             QtCore.QRect(0, 50, 470, 391))
-
+        self.listWidget[chat_from_uin].setSpacing(3)
         return self.page
-
+    def sendButtonOnClick(self,uin):
+        print 'ready to send msg'
+        msg=u'{0}'.format(self.textEdit[uin].toPlainText ()).replace(b'\n',b' ')
+        if msg != '':
+            print 'ready:',msg
+            self.textEdit[uin].setPlainText('')
+            # add msg
+            self.main.sendMsg(uin,msg)
+            print 'myuin:',self.main.myuin
+            self.item, self.widget = self.createWidget(
+                1, self.listWidget[uin], msg,self.main.myuin)
+            self.listWidget[uin].setItemWidget(self.item, self.widget)
+            self.listWidget[uin].scrollToBottom()
+            
+        else:
+            print 'null msg'
     def createWidget(self, style, listWidget, chat_msg,uin):
         self.listWidgetItem = QtGui.QListWidgetItem(listWidget)
         self.listWidgetItem.setSizeHint(QtCore.QSize(0, 50))
@@ -154,22 +175,25 @@ class Ui_Chat(object):
         self.graphicsView = QtGui.QGraphicsView(self.widget)
         self.label = QtGui.QTextBrowser(self.widget)
         self.label.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        orient=''
         if style == 0:
             self.widget.setGeometry(QtCore.QRect(0, 10, 455, 50))
             self.graphicsView.setGeometry(QtCore.QRect(5, 5, 60, 60))
             self.graphicsView.setScene(self.createImg(uin))
             self.graphicsView.resize(50,50)
             self.label.setGeometry(QtCore.QRect(50, 5, 390, 50))
+            orient='left'
         elif style == 1:
             self.widget.setGeometry(QtCore.QRect(0, 10, 455, 50))
-            self.graphicsView.setGeometry(QtCore.QRect(398, 10, 60, 60))
+            self.graphicsView.setGeometry(QtCore.QRect(392, 5, 60, 60))
+            self.graphicsView.setScene(self.createImg(uin))
+            self.graphicsView.resize(50,50)
             self.label.setGeometry(QtCore.QRect(10, 5, 390, 50))
-            self.label.setAlignment(QtCore.Qt.AlignRight)
-            self.label.setLayoutDirection(QtCore.Qt.LeftToRight)
+            orient='right'
         # msg edit
 
         content = u'''
-<html><body>''' + chat_msg + '''</body></html>
+<html><body><p align="'''+orient+'''"> ''' + chat_msg + '''</p></body></html>
         '''
         doc = QtGui.QTextDocument(self.label)
         doc.setHtml(content)

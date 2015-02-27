@@ -9,6 +9,7 @@ import json
 import time
 import random
 import os
+import json.encoder as json_encode,json.decoder as json_decode
 
 class PyLinuxQQ(object):
 
@@ -30,7 +31,7 @@ class PyLinuxQQ(object):
     psessionid = ''
     info_hash = ''
     clientid = '53999199'
-
+    msgid = 74210001
     def __init__(self, username, password):
         super(PyLinuxQQ, self).__init__()
         self.cookies = cookielib.CookieJar()
@@ -227,6 +228,27 @@ class PyLinuxQQ(object):
             return data['result']
         else:
             return None
+    def send_msg(self,to_uin,msg=u'hello world'):
+        '''
+        url = 'http://d.web2.qq.com/channel/send_buddy_msg2'
+        data_poll = {
+            'r': '{"to":'+str(to_uin)+',"content":"[\"'+msg+u'\",[\"font\",{\"name\":\"宋体\",\"size\":10,\"style\":[0,0,0],\"color\":\"000000\"}]]","face":147,"clientid":'+self.clientid+',"msg_id":'+str(self.msgid)+',"psessionid":"'+self.psessionid+'"}'
+        }
+        req = urllib2.Request(url, data=urllib.urlencode(data_poll))
+        req.add_header(
+            'Referer', 'http://d.web2.qq.com/proxy.html?v=20130916001&callback=1&id=2')
+        urllib2.urlopen(req)
+        '''
+        print 'sendto:',to_uin,'-',msg
+        self.msgid+=1
+        msg = u"[\""+ msg +u"\",[\"font\",{\"name\":\""+u'宋体'+u"\",\"size\":\"10\",\"style\":[0,0,0],\"color\":\"000000\"}]]"
+        url = 'http://d.web2.qq.com/channel/send_buddy_msg2'
+        a = {'to':to_uin,'face':180,'content':msg,'msg_id':self.msgid,'clientid':self.clientid,'psessionid':self.psessionid}
+        array = {'r':json_encode.JSONEncoder().encode(a)}
+        req = urllib2.Request(url, data=urllib.urlencode(array))
+        req.add_header(
+            'Referer', 'http://d.web2.qq.com/proxy.html?v=20130916001&callback=1&id=2')
+        urllib2.urlopen(req)
 '''
 if __name__ == "__main__":
     qq = PyLinuxQQ('28762822', 'xxx')

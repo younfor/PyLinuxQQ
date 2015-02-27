@@ -65,10 +65,11 @@ def load_msg(main):
         else:
             print 'msg none'
 
+
 class qqMain(QtGui.QMainWindow, QtCore.QObject):
 
     signal = QtCore.pyqtSignal(int)
-
+    chat = None
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
         thread.start_new_thread(load_data, (self,))
@@ -79,7 +80,8 @@ class qqMain(QtGui.QMainWindow, QtCore.QObject):
         self.show()
 
     def execute(self, arg):
-        global opened,qqchat
+        global opened, qqchat
+        self.chat=qqchat
         if arg == 0:
             self.ui.setupFriend(data_friends, online)
         if arg == 1:
@@ -87,8 +89,9 @@ class qqMain(QtGui.QMainWindow, QtCore.QObject):
         if arg == 3:
             self.ui.setupSelf(self, account, lnick)
         if arg == 4:
-            self.ui.openChat(self, opened,qqchat,message)
-    def loadFace(self,id):
+            self.ui.openChat(self, opened, qqchat, message)
+
+    def loadFace(self, id):
         qq.get_happyface(id)
 # login
 
@@ -98,7 +101,6 @@ def start_api():
 
 
 def check_user(username, login):
-    qq.login_sig()
     qq.username = username
     if qq.login_check() == True:
         print 'check code True'
@@ -126,11 +128,11 @@ class qqLogin(QtGui.QMainWindow, QtCore.QObject):
 
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
-        thread.start_new_thread(start_api, ())
         self.signal_showCode.connect(self.showCode)
         self.signal_reLogin.connect(self.reLogin)
         self.signal_exit.connect(self.startMain)
         self.loginGui()
+        qq.login_sig()
 
     def startMain(self):
         self.close()
@@ -143,6 +145,8 @@ class qqLogin(QtGui.QMainWindow, QtCore.QObject):
         self.ui.btn_login.setText(u'登陆')
         self.ui.text_pwd.setText(u'')
         self.hasCode = False
+        thread.start_new_thread(
+            check_user, (str(self.ui.text_user.text()), self))
 
     def loginGui(self):
         self.ui = Ui_login()
@@ -201,13 +205,24 @@ class qqLogin(QtGui.QMainWindow, QtCore.QObject):
 # chat
 
 
+def sendMsg(uin, msg):
+    qq.send_msg(uin, msg)
+
+
 class qqChat(QtGui.QMainWindow, QtCore.QObject):
+
+    myuin = None
 
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
         self.ui = Ui_Chat()
         self.ui.setupUi(self)
-        self.show()
+        #self.show()
+
+    def sendMsg(self, uin, msg):
+        self.myuin = account
+        thread.start_new_thread(sendMsg, (uin, msg))
+
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
     qqlogin = qqLogin()

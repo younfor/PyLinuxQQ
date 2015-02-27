@@ -43,6 +43,7 @@ class Ui_Main(object):
         self.font3.setPointSize(9)
 
     def setupUi(self, Main):
+        self.main=Main
         # font
         self.setupFont()
         # head
@@ -109,8 +110,16 @@ class Ui_Main(object):
             scene.addItem(item)
             self.graphicsView[data['friends'][i]['uin']].setScene(scene)
             self.graphicsView[data['friends'][i]['uin']].resize(50,50)
-
+    def itemOnDoubleClicked(self,item):
+        print 'double itemDoubleClicked'
+        print item.listWidget().itemWidget(item)
+        widget=item.listWidget().itemWidget(item)
+        uin=int(widget.property('uin').toString())
+        print uin
+        self.main.chat.ui.createMsg(self,uin,None)
+        self.main.chat.show()
     def setupFriend(self, data,online):
+        print 'type',type(data['friends'][0]['uin'])
         # categories
         if data['categories'][0]['index'] == 0:
             self.listWidget = {}
@@ -118,12 +127,15 @@ class Ui_Main(object):
             self.listWidget = {0: QtGui.QListWidget()}
             self.toolBox.addItem(self.listWidget[0], _fromUtf8('我的好友'))
             self.listWidget[0].setGeometry(QtCore.QRect(0, 1, 238, 301))
+            QtCore.QObject.connect(self.listWidget[0], QtCore.SIGNAL(_fromUtf8("itemDoubleClicked(QListWidgetItem*)")), self.itemOnDoubleClicked)
+            #QtCore.QObject.connect(self.listWidget, QtCore.SIGNAL(_fromUtf8("itemDoubleClicked(QListWidgetItem*)")), self.listWidget.scrollToBottom)
         for cat in data['categories']:
             self.listWidget[cat['index']] = QtGui.QListWidget()
             self.toolBox.addItem(
                 self.listWidget[cat['index']], _fromUtf8(cat['name']))
             self.listWidget[cat['index']].setGeometry(
                 QtCore.QRect(0, 1, 238, 301))
+            QtCore.QObject.connect(self.listWidget[cat['index']], QtCore.SIGNAL(_fromUtf8("itemDoubleClicked(QListWidgetItem*)")), self.itemOnDoubleClicked)
         self.graphicsView = {}
         # userlist
         self.userdict={}
@@ -180,6 +192,7 @@ class Ui_Main(object):
         self.listWidgetItem = QtGui.QListWidgetItem(listWidget)
         self.listWidgetItem.setSizeHint(QtCore.QSize(0, 48))
         self.widget = QtGui.QWidget()
+        self.widget.setProperty('uin',uin)
         self.widget.setGeometry(QtCore.QRect(0, 0, 238, 51))
         self.graphicsView[uin] = QtGui.QGraphicsView(self.widget)
         self.graphicsView[uin].setGeometry(QtCore.QRect(1, 1, 38, 38))

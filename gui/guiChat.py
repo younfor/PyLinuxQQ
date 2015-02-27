@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'gui/guiChat.ui'
 #
-# Created: Thu Feb 26 17:50:54 2015
+# Created: Fri Feb 27 15:12:35 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -141,6 +141,9 @@ class Ui_Chat(object):
         self.listWidget_2 = QtGui.QListWidget(self.widget_2)
         self.listWidget_2.setGeometry(QtCore.QRect(120, 40, 256, 192))
         self.listWidget_2.setObjectName(_fromUtf8("listWidget_2"))
+        self.textBrowser_2 = QtGui.QTextBrowser(self.widget_2)
+        self.textBrowser_2.setGeometry(QtCore.QRect(130, 10, 256, 192))
+        self.textBrowser_2.setObjectName(_fromUtf8("textBrowser_2"))
         self.textBrowser = QtGui.QTextBrowser(self.scrollAreaWidgetContents)
         self.textBrowser.setGeometry(QtCore.QRect(80, 180, 256, 81))
         self.textBrowser.setMinimumSize(QtCore.QSize(0, 40))
@@ -166,6 +169,7 @@ class Ui_Chat(object):
 
         self.retranslateUi(Chat)
         self.toolBox.setCurrentIndex(0)
+        QtCore.QObject.connect(self.listWidget, QtCore.SIGNAL(_fromUtf8("itemDoubleClicked(QListWidgetItem*)")), self.listWidget.scrollToBottom)
         QtCore.QMetaObject.connectSlotsByName(Chat)
 
     def retranslateUi(self, Chat):

@@ -353,6 +353,16 @@
          </rect>
         </property>
        </widget>
+       <widget class="QTextBrowser" name="textBrowser_2">
+        <property name="geometry">
+         <rect>
+          <x>130</x>
+          <y>10</y>
+          <width>256</width>
+          <height>192</height>
+         </rect>
+        </property>
+       </widget>
       </widget>
       <widget class="QTextBrowser" name="textBrowser">
        <property name="geometry">
@@ -432,5 +442,22 @@ p, li { white-space: pre-wrap; }
   </widget>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>listWidget</sender>
+   <signal>itemDoubleClicked(QListWidgetItem*)</signal>
+   <receiver>listWidget</receiver>
+   <slot>scrollToBottom()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>339</x>
+     <y>249</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>339</x>
+     <y>249</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
