@@ -162,7 +162,23 @@ class PyLinuxQQ(object):
         get_hash = cx.execute(file_js.read())
         self.info_hash = get_hash(self.username, self.ptwebqq)
         print 'info_hash:', self.info_hash
-
+    def get_groups(self):
+        '''
+        result: {gmasklist: [], gnamelist: [{flag: 16794625, name: "Python学习交流群", gid: 4056809648, code: 2351612940}],…}
+            gmarklist: []
+            gmasklist: []
+            gnamelist: [{flag: 16794625, name: "Python学习交流群", gid: 4056809648, code: 2351612940}]
+            retcode: 0
+        '''
+        url_post='http://s.web2.qq.com/api/get_group_name_list_mask2'
+        data_post = {
+            'r': '{"vfwebqq":"' + self.newvfwebqq + '","hash":"' + self.info_hash + '"}'
+        }
+        req = urllib2.Request(url_post, data=urllib.urlencode(data_post))
+        req.add_header(
+            'Referer', 'http://s.web2.qq.com/proxy.html?v=20130916001&callback=1&id=1')
+        data = json.load(urllib2.urlopen(req))
+        return data['result']
     def get_friends(self):
         url_post = 'http://s.web2.qq.com/api/get_user_friends2'
         data_post = {
@@ -172,6 +188,14 @@ class PyLinuxQQ(object):
         req.add_header(
             'Referer', 'http://s.web2.qq.com/proxy.html?v=20130916001&callback=1&id=1')
         data = json.load(urllib2.urlopen(req))
+        return data['result']
+    def get_discuss(self):
+        url='http://s.web2.qq.com/api/get_discus_list?clientid='+self.clientid+'&psessionid='+self.psessionid+'&vfwebqq='+self.newvfwebqq+'&t=1425137995649'
+        req=urllib2.Request(url)
+        req.add_header(
+            'Referer', 'http://s.web2.qq.com/proxy.html?v=20130916001&callback=1&id=1')
+        data=json.load(urllib2.urlopen(req))
+        print 'retcode',data['retcode']
         return data['result']
     def get_online_uin(self):
         url='http://d.web2.qq.com/channel/get_online_buddies2?vfwebqq='+self.newvfwebqq+'&clientid='+self.clientid+'&psessionid='+self.psessionid+'&t=1424840879328'
@@ -189,6 +213,15 @@ class PyLinuxQQ(object):
             'Referer', 'http://s.web2.qq.com/proxy.html?v=20130916001&callback=1&id=1')
         data=json.load(urllib2.urlopen(req))
         return data['result']
+    def get_groupface(self,uin='2119577577'):
+        if os.path.exists('tmp/group/'+uin+'.jpg'):
+            print 'exist uin',uin
+        url = 'http://face%s'%random.randint(1,9)+'.web.qq.com/cgi/svr/face/getface?cache=1&type=4&f=40&uin=%s'%uin+'&vfwebqq=%s'%self.newvfwebqq
+        req = urllib2.Request(url)
+        data=urllib2.urlopen(req).read()
+        f=open('tmp/group/'+uin+'.jpg','wb')
+        f.write(data)
+        f.close()
     def get_face(self,uin='1599524561'):
         if os.path.exists('tmp/head/'+uin+'.jpg'):
             print 'exist uin',uin

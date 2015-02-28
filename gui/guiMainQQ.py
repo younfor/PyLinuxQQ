@@ -83,10 +83,26 @@ class Ui_Main(object):
         self.tabWidget.addTab(self.tab_2, _fromUtf8("    好   友   "))
         # 群组
         self.tab_3 = QtGui.QWidget()
-        self.listWidget = QtGui.QListWidget(self.tab_3)
-        self.listWidget.setGeometry(QtCore.QRect(0, 11, 261, 351))
+        self.scrollArea = QtGui.QScrollArea(self.tab_3)
+        self.scrollArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.scrollArea.setGeometry(QtCore.QRect(0, 7, 261, 361))
+        self.scrollArea.setWidgetResizable(False)
+        self.toolBox_group = QtGui.QToolBox()
+        self.scrollArea.setWidget(self.toolBox_group)
+        self.toolBox_group.setGeometry(QtCore.QRect(0, 7, 250, 400))
+        self.toolBox_group.setCurrentIndex(0)
         self.tabWidget.addTab(self.tab_3, _fromUtf8("    群   组   "))
         self.tabWidget.setCurrentIndex(1)
+            #discuss
+        self.listWidget_discuss = QtGui.QListWidget()
+        self.toolBox_group.addItem(self.listWidget_discuss, _fromUtf8('讨论组'))
+        self.listWidget_discuss.setGeometry(QtCore.QRect(0, 1, 238, 301))
+        #QtCore.QObject.connect(self.listWidget_discuss, QtCore.SIGNAL(_fromUtf8("itemDoubleClicked(QListWidgetItem*)")), self.itemOnDoubleClickedDiscuss)
+            #group
+        self.listWidget_group = QtGui.QListWidget()
+        self.toolBox_group.addItem(self.listWidget_group, _fromUtf8('群 组'))
+        self.listWidget_group.setGeometry(QtCore.QRect(0, 1, 238, 301))
+        #QtCore.QObject.connect(self.listWidget_group, QtCore.SIGNAL(_fromUtf8("itemDoubleClicked(QListWidgetItem*)")), self.itemOnDoubleClickedDiscuss)
         QtCore.QMetaObject.connectSlotsByName(Main)
     def setupSelf(self,main,account,lnick):
         pixmap = QtGui.QPixmap()
@@ -118,6 +134,10 @@ class Ui_Main(object):
         print uin
         self.main.chat.ui.createMsg(self,uin,None)
         self.main.chat.show()
+    def setupGroup(self,data):
+        pass
+    def setupDiscuss(self,data):
+        pass
     def setupFriend(self, data,online):
         print 'type',type(data['friends'][0]['uin'])
         # categories
@@ -211,7 +231,7 @@ class Ui_Main(object):
             self.lbl_comment.setText(_translate("Main", '[离线]', None))
         self.lbl_comment.setFont(self.font3)
         return self.listWidgetItem, self.widget
-    def openChat(self,main,opened,qqchat,msg):
+    def openChat(self,main,opened,qqchat,msg,flag=0):
         '''
         content: [["font", {size: 10, color: "000000", style: [0, 0, 0], name: "宋体"}], "你好啊，", ["face", 3], "嘿嘿 "]
         0: ["font", {size: 10, color: "000000", style: [0, 0, 0], name: "宋体"}]
@@ -226,6 +246,7 @@ class Ui_Main(object):
         time: 1424938754
         to_uin: 28762822
         '''
+        # flag 0qq, 1group, 2discuss
         if opened==False:
             opened==True
             qqchat.show()

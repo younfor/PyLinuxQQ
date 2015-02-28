@@ -20,6 +20,7 @@ account = None
 lnick = None
 online = None
 message = None
+g_message = None
 # get friendslist
 
 
@@ -52,9 +53,9 @@ def load_data(main):
 
 
 def load_msg(main):
-    global message
+    global message, g_message
     while True:
-        time.sleep(0.5)
+        time.sleep(0.2)
         data = qq.get_poll()
         if data is not None:
             print 'msg coming'
@@ -62,6 +63,10 @@ def load_msg(main):
                 print 'user message'
                 message = data[0]['value']
                 main.signal.emit(4)
+            if data[0]['poll_type'] == 'group_message':
+                print 'group_message'
+                g_message = data[0]['value']
+                main.signal.emit(5)
         else:
             print 'msg none'
 
@@ -70,6 +75,7 @@ class qqMain(QtGui.QMainWindow, QtCore.QObject):
 
     signal = QtCore.pyqtSignal(int)
     chat = None
+
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
         thread.start_new_thread(load_data, (self,))
@@ -81,7 +87,7 @@ class qqMain(QtGui.QMainWindow, QtCore.QObject):
 
     def execute(self, arg):
         global opened, qqchat
-        self.chat=qqchat
+        self.chat = qqchat
         if arg == 0:
             self.ui.setupFriend(data_friends, online)
         if arg == 1:
@@ -90,6 +96,8 @@ class qqMain(QtGui.QMainWindow, QtCore.QObject):
             self.ui.setupSelf(self, account, lnick)
         if arg == 4:
             self.ui.openChat(self, opened, qqchat, message)
+        if arg == 5:
+            self.ui.openChat(self, opened, qqchat, g_message, 1)
 
     def loadFace(self, id):
         qq.get_happyface(id)
@@ -217,7 +225,7 @@ class qqChat(QtGui.QMainWindow, QtCore.QObject):
         QtGui.QWidget.__init__(self, parent)
         self.ui = Ui_Chat()
         self.ui.setupUi(self)
-        #self.show()
+        # self.show()
 
     def sendMsg(self, uin, msg):
         self.myuin = account
