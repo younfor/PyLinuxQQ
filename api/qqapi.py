@@ -213,15 +213,6 @@ class PyLinuxQQ(object):
             'Referer', 'http://s.web2.qq.com/proxy.html?v=20130916001&callback=1&id=1')
         data=json.load(urllib2.urlopen(req))
         return data['result']
-    def get_groupface(self,uin='2119577577'):
-        if os.path.exists('tmp/group/'+uin+'.jpg'):
-            print 'exist uin',uin
-        url = 'http://face%s'%random.randint(1,9)+'.web.qq.com/cgi/svr/face/getface?cache=1&type=4&f=40&uin=%s'%uin+'&vfwebqq=%s'%self.newvfwebqq
-        req = urllib2.Request(url)
-        data=urllib2.urlopen(req).read()
-        f=open('tmp/group/'+uin+'.jpg','wb')
-        f.write(data)
-        f.close()
     def get_face(self,uin='1599524561'):
         if os.path.exists('tmp/head/'+uin+'.jpg'):
             print 'exist uin',uin

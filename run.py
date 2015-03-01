@@ -16,12 +16,26 @@ qqchat = None
 opened = False
 # data
 data_friends = None
+data_group = None
+data_discuss = None
 account = None
 lnick = None
 online = None
 message = None
 g_message = None
-# get friendslist
+# Main
+
+
+def load_group(main):
+    global data_group
+    data_group = qq.get_groups()
+    # print data_group
+    main.signal.emit(2)
+
+def load_discuss(main):
+    global data_discuss
+    data_discuss = qq.get_discuss()
+    main.signal.emit(6)
 
 
 def load_data(main):
@@ -30,6 +44,10 @@ def load_data(main):
     qq.get_infoHash()
     # get friends
     data_friends = qq.get_friends()
+    # get group
+    thread.start_new_thread(load_group, (main,))
+    # get discuss
+    thread.start_new_thread(load_discuss, (main,))
     # get selfinfo
     data = qq.get_self_info()
     account = data['account']
@@ -53,7 +71,7 @@ def load_data(main):
 
 
 def load_msg(main):
-    global message, g_message
+    global message, g_message, d_message
     while True:
         time.sleep(0.2)
         data = qq.get_poll()
@@ -66,7 +84,11 @@ def load_msg(main):
             if data[0]['poll_type'] == 'group_message':
                 print 'group_message'
                 g_message = data[0]['value']
-                main.signal.emit(5)
+                # main.signal.emit(5)
+            if data[0]['poll_type'] == 'discu_message':
+                print 'discu_message'
+                d_message = data[0]['value']
+                # main.signal.emit()
         else:
             print 'msg none'
 
@@ -90,6 +112,10 @@ class qqMain(QtGui.QMainWindow, QtCore.QObject):
         self.chat = qqchat
         if arg == 0:
             self.ui.setupFriend(data_friends, online)
+        if arg == 2:
+            self.ui.setupGroup(data_group)
+        if arg == 6:
+            self.ui.setupDiscuss(data_discuss)
         if arg == 1:
             self.ui.setupFace(self, data_friends)
         if arg == 3:

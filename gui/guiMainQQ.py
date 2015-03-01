@@ -90,9 +90,9 @@ class Ui_Main(object):
         self.toolBox_group = QtGui.QToolBox()
         self.scrollArea.setWidget(self.toolBox_group)
         self.toolBox_group.setGeometry(QtCore.QRect(0, 7, 250, 400))
-        self.toolBox_group.setCurrentIndex(0)
         self.tabWidget.addTab(self.tab_3, _fromUtf8("    群   组   "))
         self.tabWidget.setCurrentIndex(1)
+        self.toolBox_group.currentChanged.connect(self.onToolBoxChanged_group)
             #discuss
         self.listWidget_discuss = QtGui.QListWidget()
         self.toolBox_group.addItem(self.listWidget_discuss, _fromUtf8('讨论组'))
@@ -101,7 +101,10 @@ class Ui_Main(object):
             #group
         self.listWidget_group = QtGui.QListWidget()
         self.toolBox_group.addItem(self.listWidget_group, _fromUtf8('群 组'))
+        self.toolBox_group.setCurrentIndex(1)
         self.listWidget_group.setGeometry(QtCore.QRect(0, 1, 238, 301))
+        self.toolsize_group=[0,0]
+        self.graphicsView_group = {}
         #QtCore.QObject.connect(self.listWidget_group, QtCore.SIGNAL(_fromUtf8("itemDoubleClicked(QListWidgetItem*)")), self.itemOnDoubleClickedDiscuss)
         QtCore.QMetaObject.connectSlotsByName(Main)
     def setupSelf(self,main,account,lnick):
@@ -133,11 +136,43 @@ class Ui_Main(object):
         uin=int(widget.property('uin').toString())
         print uin
         self.main.chat.ui.createMsg(self,uin,None)
-        self.main.chat.show()
+        self.main.chat.showNormal()
+    def createImg(self,flag,uin):
+        pixmap = QtGui.QPixmap()
+        if flag=='discuss':
+            url='tmp/sys/discuss.png'
+        if flag=='group':
+            url='tmp/sys/group.jpg'
+        pixmap.load(url)
+        scene = QtGui.QGraphicsScene()
+        item = QtGui.QGraphicsPixmapItem(pixmap)
+        scene.addItem(item)
+        return scene
     def setupGroup(self,data):
-        pass
+        print 'group' 
+        self.groupdict={}
+        for g in data['gnamelist']:
+            info={'name':g['name'],'gid':g['gid'],'code':g['code']}
+            self.groupdict[g['gid']]=info
+            item,widget=self.createWidget_group(self.listWidget_group,g['name'],g['gid'],'group')
+            self.listWidget_group.setItemWidget(item, widget)
+        self.toolsize_group[1]=len(data['gnamelist'])
+        self.toolBox_group.resize(QtCore.QSize(250,self.toolsize_group[1]*48+len(self.toolsize_group)*34))
+    def onToolBoxChanged_group(self,index):
+        self.toolBox_group.resize(QtCore.QSize(250,self.toolsize_group[index]*48+len(self.toolsize_group)*34))
+    def onToolBoxChanged(self,index):
+        self.toolBox.resize(QtCore.QSize(250,self.toolsize[index]*48+len(self.toolsize)*34))
+
     def setupDiscuss(self,data):
-        pass
+        print 'discuss' 
+        self.discussdict={}
+        for g in data['dnamelist']:
+            info={'name':g['name'],'did':g['did']}
+            self.discussdict[g['did']]=info
+            item,widget=self.createWidget_group(self.listWidget_discuss,g['name'],g['did'],'discuss')
+            self.listWidget_discuss.setItemWidget(item, widget)
+        self.toolsize_group[0]=len(data['dnamelist'])
+        
     def setupFriend(self, data,online):
         print 'type',type(data['friends'][0]['uin'])
         # categories
@@ -204,10 +239,27 @@ class Ui_Main(object):
             print size
             self.toolsize.append(size)
             self.toolBox.setItemText(j,self.toolBox.itemText(j)+'('+str(cat_count.get(key,0))+'/'+str(size)+')')
+        self.toolBox.setCurrentIndex(j)
         self.toolBox.currentChanged.connect(self.onToolBoxChanged)
         self.toolBox.resize(QtCore.QSize(250,self.toolsize[0]*48+len(self.toolsize)*34))
     def onToolBoxChanged(self,index):
         self.toolBox.resize(QtCore.QSize(250,self.toolsize[index]*48+len(self.toolsize)*34))
+    
+    def createWidget_group(self,listWidget,title,guin,flag):
+        self.listWidgetItem = QtGui.QListWidgetItem(listWidget)
+        self.listWidgetItem.setSizeHint(QtCore.QSize(0, 48))
+        self.widget = QtGui.QWidget()
+        self.widget.setProperty('guin',guin)
+        self.widget.setGeometry(QtCore.QRect(0, 0, 238, 51))
+        self.graphicsView_group[guin] = QtGui.QGraphicsView(self.widget)
+        self.graphicsView_group[guin].setGeometry(QtCore.QRect(1, 1, 60, 60))
+        self.graphicsView_group[guin].setScene(self.createImg(flag,guin))
+        self.graphicsView_group[guin].resize(50,50)
+        self.lbl_title = QtGui.QLabel(self.widget)
+        self.lbl_title.setGeometry(QtCore.QRect(60, 10, 181, 18))
+        self.lbl_title.setFont(self.font2)
+        self.lbl_title.setText(_translate("Main", title, None))
+        return self.listWidgetItem, self.widget
     def createWidget(self,listWidget, title,markname,uin):
         self.listWidgetItem = QtGui.QListWidgetItem(listWidget)
         self.listWidgetItem.setSizeHint(QtCore.QSize(0, 48))
