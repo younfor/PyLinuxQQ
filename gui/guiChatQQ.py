@@ -59,8 +59,9 @@ class Ui_Chat(object):
         self.button_send = {}
         self.textEdit = {}
         QtCore.QMetaObject.connectSlotsByName(Chat)
-        # test
-        #self.createMsg()
+        # data
+        self.groupInfo={}  #gcode
+        self.discussInfo={}
 
     def createSideButton(self, uin, title):
         # side button
@@ -125,21 +126,32 @@ class Ui_Chat(object):
             if flag==1 and g_sender is None:
                 ex='sys'
                 name='group.jpg'
-            if flag==2 and g_sender is None:
+            elif flag==2 and g_sender is None:
                 ex='sys'
                 name='discuss.png'
             else:
-                name = str(g_sender)
+                name = str(g_sender)+'.jpg'
         pixmap = QtGui.QPixmap()
 
         if not os.path.exists('tmp/'+ex+'/' + name ):
+            if flag!=0:
+                self.main.loadFace(g_sender)
+                print 'load group face'
             name = 'qq.jpg'
+        print 'pic:','tmp/',ex,'/',name
         pixmap.load('tmp/'+ex+'/' + name )
         scene = QtGui.QGraphicsScene()
         item = QtGui.QGraphicsPixmapItem(pixmap)
         scene.addItem(item)
         return scene
     def createPage(self, chat_from_uin,userinfo,flag=0):
+        # load groupInfo
+        if flag==1:
+            if self.groupInfo.get(userinfo['code']) is None:
+                self.groupInfo[chat_from_uin]=self.main.loadGroupInfo(userinfo['code'])
+        if flag==2:
+            if self.discussInfo.get(userinfo['did']) is None:
+                self.discussInfo[chat_from_uin]=self.main.loadDiscussInfo(userinfo['did'])
         self.page = QtGui.QWidget()
         line = QtGui.QFrame(self.page)
         line.setGeometry(QtCore.QRect(-3, 40, 471, 20))
@@ -214,23 +226,32 @@ class Ui_Chat(object):
         self.label = QtGui.QTextBrowser(self.widget)
         self.label.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         orient=''
+        if flag==0:
+            ruin=uin
+        else:
+            ruin=g_sender
+            print 'img senderuin:',ruin
         if style == 0:
             self.widget.setGeometry(QtCore.QRect(0, 10, 455, 50))
             self.graphicsView.setGeometry(QtCore.QRect(5, 5, 60, 60))
-            self.graphicsView.setScene(self.createImg(uin,flag,g_sender))
+            self.graphicsView.setScene(self.createImg(ruin,flag,g_sender))
             self.graphicsView.resize(50,50)
             self.label.setGeometry(QtCore.QRect(50, 5, 390, 50))
             orient='left'
         elif style == 1:
             self.widget.setGeometry(QtCore.QRect(0, 10, 455, 50))
             self.graphicsView.setGeometry(QtCore.QRect(392, 5, 60, 60))
-            self.graphicsView.setScene(self.createImg(uin,flag,g_sender))
+            self.graphicsView.setScene(self.createImg(ruin,flag,g_sender))
             self.graphicsView.resize(50,50)
             self.label.setGeometry(QtCore.QRect(10, 5, 390, 50))
             orient='right'
         # msg edit
+        if flag==1:
+            nick=self.groupInfo[uin][g_sender]['nick']
+        if flag==2:
+            nick=self.discussInfo[uin][g_sender]['nick']
         if flag==1 or flag==2:
-            chat_msg=u'<p><b>群成员</b></p><p>'+chat_msg+'</p>'
+            chat_msg=u'<p><b>'+nick+'</b></p><p>'+chat_msg+'</p>'
         content = u'''
 <html><body><p align="'''+orient+'''"> ''' + chat_msg + '''</p></body></html>
         '''

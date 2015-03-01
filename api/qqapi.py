@@ -213,14 +213,28 @@ class PyLinuxQQ(object):
             'Referer', 'http://s.web2.qq.com/proxy.html?v=20130916001&callback=1&id=1')
         data=json.load(urllib2.urlopen(req))
         return data['result']
+    def get_group_info(self,gcode):
+        url='http://s.web2.qq.com/api/get_group_info_ext2?gcode='+str(gcode)+'&vfwebqq='+self.newvfwebqq+'&t=1425209155401'
+        req=urllib2.Request(url)
+        req.add_header(
+            'Referer', 'http://s.web2.qq.com/proxy.html?v=20130916001&callback=1&id=1')
+        data=json.load(urllib2.urlopen(req))
+        return data['result']
+    def get_discuss_info(self,did):
+        url='http://d.web2.qq.com/channel/get_discu_info?did='+str(did)+'&vfwebqq='+self.newvfwebqq+'&clientid='+self.clientid+'&psessionid='+self.psessionid+'&t=1425209305561'
+        req=urllib2.Request(url)
+        req.add_header(
+            'Referer', 'http://d.web2.qq.com/proxy.html?v=20130916001&callback=1&id=2')
+        data=json.load(urllib2.urlopen(req))
+        return data['result']
     def get_face(self,uin='1599524561'):
-        if os.path.exists('tmp/head/'+uin+'.jpg'):
+        if os.path.exists('tmp/head/'+str(uin)+'.jpg'):
             print 'exist uin',uin
             return
         url = 'http://face%s'%random.randint(1,9)+'.web.qq.com/cgi/svr/face/getface?cache=1&type=1&f=40&uin=%s'%uin+'&vfwebqq=%s'%self.newvfwebqq
         req = urllib2.Request(url)
         data=urllib2.urlopen(req).read()
-        f=open('tmp/head/'+uin+'.jpg','wb')
+        f=open('tmp/head/'+str(uin)+'.jpg','wb')
         f.write(data)
         f.close()
     def get_happyface(self,id):

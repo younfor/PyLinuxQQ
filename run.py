@@ -260,6 +260,10 @@ def sendMsg(uin, msg):
     qq.send_msg(uin, msg)
 
 
+def loadFace(uin):
+    qq.get_face(uin)
+
+
 class qqChat(QtGui.QMainWindow, QtCore.QObject):
 
     myuin = None
@@ -274,6 +278,24 @@ class qqChat(QtGui.QMainWindow, QtCore.QObject):
         self.myuin = account
         thread.start_new_thread(sendMsg, (uin, msg))
 
+    def loadFace(self, uin):
+        thread.start_new_thread(loadFace, (uin,))
+
+    def loadGroupInfo(self, gcode):
+        result = {}
+        ginfo = qq.get_group_info(gcode)
+        for item in ginfo['minfo']:
+            result[item['uin']] = item
+        print result
+        return result
+
+    def loadDiscussInfo(self, did):
+        result = {}
+        dinfo = qq.get_discuss_info(did)
+        for item in dinfo['mem_info']:
+            result[item['uin']] = item
+        print result
+        return result
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
     qqlogin = qqLogin()
