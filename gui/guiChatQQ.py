@@ -67,7 +67,7 @@ class Ui_Chat(object):
         self.sideButton[uin] = QtGui.QPushButton()
         self.sideButton[uin].setGeometry(QtCore.QRect(0, 0, 101, 27))
         self.sideButton[uin].setText(_translate("Chat", title, None))
-        self.sideButton[uin].setStyleSheet("QPushButton{color:red;}")
+        self.sideButton[uin].setStyleSheet("QPushButton{color:red;font-size:10px;}")
         self.button_item = QtGui.QListWidgetItem(self.listWidget_Users)
         self.button_item.setSizeHint(QtCore.QSize(0, 30))
         self.listWidget_Users.setItemWidget(
@@ -79,36 +79,67 @@ class Ui_Chat(object):
     def sideButtonOnClick(self, uin):
         print 'uin-click:', uin
         self.stackedWidget.setCurrentWidget(self.stack[uin])
-        self.sideButton[uin].setStyleSheet("QPushButton{color:black;}")
-    def createMsg(self, main, chat_from_uin, chat_msg):
+        self.sideButton[uin].setStyleSheet("QPushButton{color:black;font-size:10px;}")
+    def createMsg(self, main, chat_from_uin, chat_msg,flag=0,g_sender=None):
         # check new
         if self.stack.get(chat_from_uin) is None:
-            self.stack[chat_from_uin] = self.createPage(chat_from_uin,main.userdict[chat_from_uin])
+            # user0  group1 discuss2
+            if flag==0:
+                self.stack[chat_from_uin] = self.createPage(chat_from_uin,main.userdict[chat_from_uin],flag)
+            if flag==1:
+                self.stack[chat_from_uin] = self.createPage(chat_from_uin,main.groupdict[chat_from_uin],flag)
+            if flag==2:
+                self.stack[chat_from_uin] = self.createPage(chat_from_uin,main.discussdict[chat_from_uin],flag)
             self.stackedWidget.addWidget(self.stack[chat_from_uin])
-            self.createSideButton(
-                chat_from_uin, main.userdict[chat_from_uin]['nickname'])
-            print 'add user:', chat_from_uin
+            if flag==0:
+                self.createSideButton(
+                    chat_from_uin, main.userdict[chat_from_uin]['nickname'])
+                print 'add user:', chat_from_uin
+            if flag==1:
+                self.createSideButton(
+                    chat_from_uin, main.groupdict[chat_from_uin]['name'])
+                print 'add group :', chat_from_uin
+            if flag==2:
+                self.createSideButton(
+                    chat_from_uin, main.discussdict[chat_from_uin]['name'])
+                print 'add discuss :', chat_from_uin
         # change color tips
         if self.stackedWidget.currentWidget()!=self.stack[chat_from_uin]:
-            self.sideButton[chat_from_uin].setStyleSheet("QPushButton{color:red;}")
+            self.sideButton[chat_from_uin].setStyleSheet("QPushButton{color:red;font-size:10px;}")
         # add msg
         if chat_msg is not None:
-            self.item, self.widget = self.createWidget(
-                0, self.listWidget[chat_from_uin], chat_msg,chat_from_uin)
+            if flag==0:
+                self.item, self.widget = self.createWidget(
+                    0, self.listWidget[chat_from_uin], chat_msg,chat_from_uin,flag)
+            else:
+                self.item, self.widget = self.createWidget(
+                    0, self.listWidget[chat_from_uin], chat_msg,chat_from_uin,flag,g_sender)
             self.listWidget[chat_from_uin].setItemWidget(self.item, self.widget)
             self.listWidget[chat_from_uin].scrollToBottom()
 
-    def createImg(self,uin):
-        name = str(uin)
+    def createImg(self,uin,flag=0,g_sender=None):
+        ex='head'
+        if flag==0:
+            name = str(uin)
+        else:
+            if flag==1 and g_sender is None:
+                ex='sys'
+                name='group.jpg'
+            if flag==2 and g_sender is None:
+                ex='sys'
+                name='discuss.png'
+            else:
+                name = str(g_sender)
         pixmap = QtGui.QPixmap()
-        if not os.path.exists('tmp/head/' + name + '.jpg'):
-            name = 'qq'
-        pixmap.load('tmp/head/' + name + '.jpg')
+
+        if not os.path.exists('tmp/'+ex+'/' + name ):
+            name = 'qq.jpg'
+        pixmap.load('tmp/'+ex+'/' + name )
         scene = QtGui.QGraphicsScene()
         item = QtGui.QGraphicsPixmapItem(pixmap)
         scene.addItem(item)
         return scene
-    def createPage(self, chat_from_uin,userinfo):
+    def createPage(self, chat_from_uin,userinfo,flag=0):
         self.page = QtGui.QWidget()
         line = QtGui.QFrame(self.page)
         line.setGeometry(QtCore.QRect(-3, 40, 471, 20))
@@ -117,22 +148,29 @@ class Ui_Chat(object):
         # head
         self.img_head = QtGui.QGraphicsView(self.page)
         self.img_head.setGeometry(QtCore.QRect(1, 1, 60, 60))
-        self.img_head.setScene(self.createImg(chat_from_uin))
+        if flag==0:
+            self.img_head.setScene(self.createImg(chat_from_uin))
+        if flag!=0:
+            self.img_head.setScene(self.createImg(chat_from_uin,flag))
         self.img_head.resize(50,50)
         self.label_head = QtGui.QLabel(self.page)
         self.label_head.setGeometry(QtCore.QRect(70, 10, 251, 18))
         # nickname
-        title=userinfo['nickname']
-        if userinfo['markname'] != 'None':
-            title=userinfo['markname']+'('+title+')'
+        if flag==0:
+            title=userinfo['nickname']
+            if userinfo['markname'] != 'None':
+                title=userinfo['markname']+'('+title+')'
+        else:
+            title=userinfo['name']
         self.label_head.setText(_translate("Chat", title, None))
         self.label_head.setFont(self.font)
         self.label_content = QtGui.QLabel(self.page)
         self.label_content.setGeometry(QtCore.QRect(70, 30, 381, 18))
         self.label_content.setFont(self.font2)
         # content
-        self.label_content.setText(
-            _translate("Chat", "[在线]", None))
+        if flag==0:
+            self.label_content.setText(
+                _translate("Chat", "[在线]", None))
         line_1 = QtGui.QFrame(self.page)
         line_1.setGeometry(QtCore.QRect(0, 440, 481, 16))
         line_1.setFrameShape(QtGui.QFrame.HLine)
@@ -168,7 +206,7 @@ class Ui_Chat(object):
             
         else:
             print 'null msg'
-    def createWidget(self, style, listWidget, chat_msg,uin):
+    def createWidget(self, style, listWidget, chat_msg,uin,flag=0,g_sender=None):
         self.listWidgetItem = QtGui.QListWidgetItem(listWidget)
         self.listWidgetItem.setSizeHint(QtCore.QSize(0, 50))
         self.widget = QtGui.QWidget()
@@ -179,19 +217,20 @@ class Ui_Chat(object):
         if style == 0:
             self.widget.setGeometry(QtCore.QRect(0, 10, 455, 50))
             self.graphicsView.setGeometry(QtCore.QRect(5, 5, 60, 60))
-            self.graphicsView.setScene(self.createImg(uin))
+            self.graphicsView.setScene(self.createImg(uin,flag,g_sender))
             self.graphicsView.resize(50,50)
             self.label.setGeometry(QtCore.QRect(50, 5, 390, 50))
             orient='left'
         elif style == 1:
             self.widget.setGeometry(QtCore.QRect(0, 10, 455, 50))
             self.graphicsView.setGeometry(QtCore.QRect(392, 5, 60, 60))
-            self.graphicsView.setScene(self.createImg(uin))
+            self.graphicsView.setScene(self.createImg(uin,flag,g_sender))
             self.graphicsView.resize(50,50)
             self.label.setGeometry(QtCore.QRect(10, 5, 390, 50))
             orient='right'
         # msg edit
-
+        if flag==1 or flag==2:
+            chat_msg=u'<p><b>群成员</b></p><p>'+chat_msg+'</p>'
         content = u'''
 <html><body><p align="'''+orient+'''"> ''' + chat_msg + '''</p></body></html>
         '''

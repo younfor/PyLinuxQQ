@@ -32,10 +32,43 @@ def load_group(main):
     # print data_group
     main.signal.emit(2)
 
+
 def load_discuss(main):
     global data_discuss
     data_discuss = qq.get_discuss()
     main.signal.emit(6)
+
+
+def load_friend(main):
+    global data_friends, online
+    data_friends = qq.get_friends()
+    # get onlinebody
+    online = qq.get_online_uin()
+    print 'online', online
+    main.signal.emit(0)
+    # get face
+    main.signal.emit(1)
+    for i in range(10):
+        thread.start_new_thread(load_face, (main, 10, i))
+
+
+def load_self(main):
+    global account, lnick
+    data = qq.get_self_info()
+    account = data['account']
+    lnick = data['lnick']
+    qq.get_face(str(account))
+    main.signal.emit(3)
+
+
+def load_face(main, count, i):
+    size = -1
+    for user in data_friends['friends']:
+        size += 1
+        if size % count == i:
+            qq.get_face(str(user['uin']))
+            print 'loadding face..', user['uin']
+    main.signal.emit(1)
 
 
 def load_data(main):
@@ -43,37 +76,19 @@ def load_data(main):
     # get hash
     qq.get_infoHash()
     # get friends
-    data_friends = qq.get_friends()
+    thread.start_new_thread(load_friend, (main,))
     # get group
     thread.start_new_thread(load_group, (main,))
     # get discuss
     thread.start_new_thread(load_discuss, (main,))
     # get selfinfo
-    data = qq.get_self_info()
-    account = data['account']
-    lnick = data['lnick']
-    main.signal.emit(3)
-    # get onlinebody
-    online = qq.get_online_uin()
-    print 'online', online
-    main.signal.emit(0)
-    # get face
-    qq.get_face(str(account))
-    main.signal.emit(1)
-    # faces
-    size = 0
-    for user in data_friends['friends']:
-        size += 1
-        qq.get_face(str(user['uin']))
-        if size % 20 == 0:
-            main.signal.emit(1)
-        print 'loadding face..', user['uin']
+    thread.start_new_thread(load_self, (main,))
 
 
 def load_msg(main):
     global message, g_message, d_message
     while True:
-        time.sleep(0.2)
+        time.sleep(0.3)
         data = qq.get_poll()
         if data is not None:
             print 'msg coming'
@@ -84,11 +99,11 @@ def load_msg(main):
             if data[0]['poll_type'] == 'group_message':
                 print 'group_message'
                 g_message = data[0]['value']
-                # main.signal.emit(5)
+                main.signal.emit(5)
             if data[0]['poll_type'] == 'discu_message':
                 print 'discu_message'
                 d_message = data[0]['value']
-                # main.signal.emit()
+                main.signal.emit(7)
         else:
             print 'msg none'
 
@@ -100,12 +115,12 @@ class qqMain(QtGui.QMainWindow, QtCore.QObject):
 
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
-        thread.start_new_thread(load_data, (self,))
-        thread.start_new_thread(load_msg, (self,))
         self.signal.connect(self.execute)
         self.ui = Ui_Main()
         self.ui.setupUi(self)
         self.show()
+        thread.start_new_thread(load_data, (self,))
+        thread.start_new_thread(load_msg, (self,))
 
     def execute(self, arg):
         global opened, qqchat
@@ -124,6 +139,8 @@ class qqMain(QtGui.QMainWindow, QtCore.QObject):
             self.ui.openChat(self, opened, qqchat, message)
         if arg == 5:
             self.ui.openChat(self, opened, qqchat, g_message, 1)
+        if arg == 7:
+            self.ui.openChat(self, opened, qqchat, d_message, 2)
 
     def loadFace(self, id):
         qq.get_happyface(id)
@@ -131,7 +148,7 @@ class qqMain(QtGui.QMainWindow, QtCore.QObject):
 
 
 def start_api():
-    pass
+    qq.login_sig()
 
 
 def check_user(username, login):
@@ -166,7 +183,6 @@ class qqLogin(QtGui.QMainWindow, QtCore.QObject):
         self.signal_reLogin.connect(self.reLogin)
         self.signal_exit.connect(self.startMain)
         self.loginGui()
-        qq.login_sig()
 
     def startMain(self):
         self.close()
@@ -189,6 +205,7 @@ class qqLogin(QtGui.QMainWindow, QtCore.QObject):
         self.ui.text_pwd.setText(u'199288@920808')
         self.hideCode()
         self.show()
+        thread.start_new_thread(start_api, ())
         print 'start login'
 
     def checkLogin(self):

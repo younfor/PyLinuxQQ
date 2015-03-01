@@ -297,6 +297,19 @@ class Ui_Main(object):
         reply_ip: 176488600
         time: 1424938754
         to_uin: 28762822
+
+       content: [["font", {size: 10, color: "000000", style: [0, 0, 0], name: "宋体"}], "噗 "]
+        from_uin: 4232023453   gid
+        group_code: 2179707954   code 
+        info_seq: 16664955
+        msg_id: 27420
+        msg_id2: 574968
+        msg_type: 43
+        reply_ip: 176884850
+        send_uin: 211668676    user
+        seq: 485
+        time: 1425198894
+        to_uin: 28762822
         '''
         # flag 0qq, 1group, 2discuss
         if opened==False:
@@ -312,4 +325,7 @@ class Ui_Main(object):
             else:
                 chat_msg+=msg['content'][i]
         print chat_from_uin,':',chat_msg
-        qqchat.ui.createMsg(self,chat_from_uin,chat_msg)
+        if flag==1 or flag==2:
+            qqchat.ui.createMsg(self,chat_from_uin,chat_msg,flag,msg['send_uin'])
+        else:
+            qqchat.ui.createMsg(self,chat_from_uin,chat_msg)
