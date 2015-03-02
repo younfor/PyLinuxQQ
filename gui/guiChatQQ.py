@@ -121,7 +121,7 @@ class Ui_Chat(object):
     def createImg(self,uin,flag=0,g_sender=None):
         ex='head'
         if flag==0:
-            name = str(uin)
+            name = str(uin)+'.jpg'
         else:
             if flag==1 and g_sender is None:
                 ex='sys'
@@ -194,7 +194,7 @@ class Ui_Chat(object):
         self.button_send[chat_from_uin].setGeometry(QtCore.QRect(392, 450, 81, 71))
         self.button_send[chat_from_uin].setText(_translate("Chat", "发送", None))
         self.button_send[chat_from_uin].clicked.connect(
-            functools.partial(self.sendButtonOnClick, chat_from_uin))
+            functools.partial(self.sendButtonOnClick, chat_from_uin,flag))
         # chat
         self.listWidget[chat_from_uin] = QtGui.QListWidget(self.page)
         self.listWidget[chat_from_uin].setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
@@ -202,14 +202,14 @@ class Ui_Chat(object):
             QtCore.QRect(0, 50, 470, 391))
         self.listWidget[chat_from_uin].setSpacing(3)
         return self.page
-    def sendButtonOnClick(self,uin):
+    def sendButtonOnClick(self,uin,flag):
         print 'ready to send msg'
         msg=u'{0}'.format(self.textEdit[uin].toPlainText ()).replace(b'\n',b' ')
         if msg != '':
             print 'ready:',msg
             self.textEdit[uin].setPlainText('')
             # add msg
-            self.main.sendMsg(uin,msg)
+            self.main.sendMsg(uin,msg,flag)
             print 'myuin:',self.main.myuin
             self.item, self.widget = self.createWidget(
                 1, self.listWidget[uin], msg,self.main.myuin)

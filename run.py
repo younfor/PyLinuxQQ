@@ -256,8 +256,13 @@ class qqLogin(QtGui.QMainWindow, QtCore.QObject):
 # chat
 
 
-def sendMsg(uin, msg):
-    qq.send_msg(uin, msg)
+def sendMsg(uin, msg, flag):
+    if flag==0:
+        qq.send_msg(uin, msg)
+    if flag==1:
+        qq.send_group_msg(uin, msg)
+    if flag==2:
+        qq.send_discuss_msg(uin, msg)
 
 
 def loadFace(uin):
@@ -274,9 +279,9 @@ class qqChat(QtGui.QMainWindow, QtCore.QObject):
         self.ui.setupUi(self)
         # self.show()
 
-    def sendMsg(self, uin, msg):
+    def sendMsg(self, uin, msg, flag):
         self.myuin = account
-        thread.start_new_thread(sendMsg, (uin, msg))
+        thread.start_new_thread(sendMsg, (uin, msg, flag))
 
     def loadFace(self, uin):
         thread.start_new_thread(loadFace, (uin,))

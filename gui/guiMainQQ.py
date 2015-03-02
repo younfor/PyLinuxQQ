@@ -97,7 +97,7 @@ class Ui_Main(object):
         self.listWidget_discuss = QtGui.QListWidget()
         self.toolBox_group.addItem(self.listWidget_discuss, _fromUtf8('讨论组'))
         self.listWidget_discuss.setGeometry(QtCore.QRect(0, 1, 238, 301))
-        #QtCore.QObject.connect(self.listWidget_discuss, QtCore.SIGNAL(_fromUtf8("itemDoubleClicked(QListWidgetItem*)")), self.itemOnDoubleClickedDiscuss)
+        QtCore.QObject.connect(self.listWidget_discuss, QtCore.SIGNAL(_fromUtf8("itemDoubleClicked(QListWidgetItem*)")), self.itemOnDoubleClickedDiscuss)
             #group
         self.listWidget_group = QtGui.QListWidget()
         self.toolBox_group.addItem(self.listWidget_group, _fromUtf8('群 组'))
@@ -105,7 +105,7 @@ class Ui_Main(object):
         self.listWidget_group.setGeometry(QtCore.QRect(0, 1, 238, 301))
         self.toolsize_group=[0,0]
         self.graphicsView_group = {}
-        #QtCore.QObject.connect(self.listWidget_group, QtCore.SIGNAL(_fromUtf8("itemDoubleClicked(QListWidgetItem*)")), self.itemOnDoubleClickedDiscuss)
+        QtCore.QObject.connect(self.listWidget_group, QtCore.SIGNAL(_fromUtf8("itemDoubleClicked(QListWidgetItem*)")), self.itemOnDoubleClickedGroup)
         QtCore.QMetaObject.connectSlotsByName(Main)
     def setupSelf(self,main,account,lnick):
         pixmap = QtGui.QPixmap()
@@ -129,13 +129,35 @@ class Ui_Main(object):
             scene.addItem(item)
             self.graphicsView[data['friends'][i]['uin']].setScene(scene)
             self.graphicsView[data['friends'][i]['uin']].resize(50,50)
+    def itemOnDoubleClickedGroup(self,item):
+        print 'double itemDoubleClicked Group'
+        print item.listWidget().itemWidget(item)
+        widget=item.listWidget().itemWidget(item)
+        uin=int(widget.property('uin').toString())
+        print uin
+        chat=self.main.chat.ui
+        chat.createMsg(self,uin,None,1)
+        chat.stackedWidget.setCurrentWidget(chat.stack[uin])
+        self.main.chat.showNormal()
+    def itemOnDoubleClickedDiscuss(self,item):
+        print 'double itemDoubleClicked discuss'
+        print item.listWidget().itemWidget(item)
+        widget=item.listWidget().itemWidget(item)
+        uin=int(widget.property('uin').toString())
+        print uin
+        chat=self.main.chat.ui
+        chat.createMsg(self,uin,None,2)
+        chat.stackedWidget.setCurrentWidget(chat.stack[uin])
+        self.main.chat.showNormal()
     def itemOnDoubleClicked(self,item):
         print 'double itemDoubleClicked'
         print item.listWidget().itemWidget(item)
         widget=item.listWidget().itemWidget(item)
         uin=int(widget.property('uin').toString())
         print uin
-        self.main.chat.ui.createMsg(self,uin,None)
+        chat=self.main.chat.ui
+        chat.createMsg(self,uin,None,0)
+        chat.stackedWidget.setCurrentWidget(chat.stack[uin])
         self.main.chat.showNormal()
     def createImg(self,flag,uin):
         pixmap = QtGui.QPixmap()
@@ -249,7 +271,7 @@ class Ui_Main(object):
         self.listWidgetItem = QtGui.QListWidgetItem(listWidget)
         self.listWidgetItem.setSizeHint(QtCore.QSize(0, 48))
         self.widget = QtGui.QWidget()
-        self.widget.setProperty('guin',guin)
+        self.widget.setProperty('uin',guin)
         self.widget.setGeometry(QtCore.QRect(0, 0, 238, 51))
         self.graphicsView_group[guin] = QtGui.QGraphicsView(self.widget)
         self.graphicsView_group[guin].setGeometry(QtCore.QRect(1, 1, 60, 60))

@@ -266,6 +266,30 @@ class PyLinuxQQ(object):
             return data['result']
         else:
             return None
+    def send_discuss_msg(self,did,msg=u'hello world'):
+        print 'send discuss to:',did,'-',msg
+        self.msgid+=1
+        msg = u"[\""+ msg +u"\",[\"font\",{\"name\":\""+u'宋体'+u"\",\"size\":\"10\",\"style\":[0,0,0],\"color\":\"000000\"}]]"
+        url = 'http://d.web2.qq.com/channel/send_discu_msg2'
+        a = {'did':did,'face':180,'content':msg,'msg_id':self.msgid,'clientid':self.clientid,'psessionid':self.psessionid}
+        array = {'r':json_encode.JSONEncoder().encode(a)}
+        req = urllib2.Request(url, data=urllib.urlencode(array))
+        req.add_header(
+            'Referer', 'http://d.web2.qq.com/proxy.html?v=20130916001&callback=1&id=2')
+        result=urllib2.urlopen(req).read()
+        print 'dicus:',result
+    def send_group_msg(self,gid,msg=u'hello world'):
+        print 'send group to:',gid,'-',msg
+        self.msgid+=1
+        msg = u"[\""+ msg +u"\",[\"font\",{\"name\":\""+u'宋体'+u"\",\"size\":\"10\",\"style\":[0,0,0],\"color\":\"000000\"}]]"
+        url = 'http://d.web2.qq.com/channel/send_qun_msg2'
+        a = {'group_uin':gid,'face':180,'content':msg,'msg_id':self.msgid,'clientid':self.clientid,'psessionid':self.psessionid}
+        array = {'r':json_encode.JSONEncoder().encode(a)}
+        req = urllib2.Request(url, data=urllib.urlencode(array))
+        req.add_header(
+            'Referer', 'http://d.web2.qq.com/proxy.html?v=20130916001&callback=1&id=2')
+        result=urllib2.urlopen(req).read()
+        print 'group:',result
     def send_msg(self,to_uin,msg=u'hello world'):
         '''
         url = 'http://d.web2.qq.com/channel/send_buddy_msg2'
