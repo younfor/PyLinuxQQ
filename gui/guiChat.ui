@@ -226,9 +226,9 @@
      <property name="geometry">
       <rect>
        <x>392</x>
-       <y>450</y>
+       <y>490</y>
        <width>81</width>
-       <height>71</height>
+       <height>31</height>
       </rect>
      </property>
      <property name="text">
@@ -426,8 +426,8 @@ p, li { white-space: pre-wrap; }
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>64</width>
-          <height>64</height>
+          <width>100</width>
+          <height>30</height>
          </rect>
         </property>
         <attribute name="label">
@@ -436,6 +436,19 @@ p, li { white-space: pre-wrap; }
        </widget>
       </widget>
      </widget>
+    </widget>
+    <widget class="QPushButton" name="pushButton_4">
+     <property name="geometry">
+      <rect>
+       <x>390</x>
+       <y>454</y>
+       <width>81</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>关闭</string>
+     </property>
     </widget>
    </widget>
    <widget class="QWidget" name="page_2"/>

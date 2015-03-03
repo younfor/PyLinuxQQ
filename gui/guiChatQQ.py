@@ -57,6 +57,8 @@ class Ui_Chat(object):
         self.listWidget = {}
         self.sideButton = {}
         self.button_send = {}
+        self.button_close ={}
+        self.item_widget={}
         self.textEdit = {}
         QtCore.QMetaObject.connectSlotsByName(Chat)
         # data
@@ -73,6 +75,7 @@ class Ui_Chat(object):
         self.button_item.setSizeHint(QtCore.QSize(0, 30))
         self.listWidget_Users.setItemWidget(
             self.button_item, self.sideButton[uin])
+        self.item_widget[uin]=self.button_item
         # click
         self.sideButton[uin].clicked.connect(
             functools.partial(self.sideButtonOnClick, uin))
@@ -191,10 +194,16 @@ class Ui_Chat(object):
         self.textEdit[chat_from_uin] = QtGui.QTextEdit(self.page)
         self.textEdit[chat_from_uin].setGeometry(QtCore.QRect(0, 450, 391, 71))
         self.button_send[chat_from_uin] = QtGui.QPushButton(self.page)
-        self.button_send[chat_from_uin].setGeometry(QtCore.QRect(392, 450, 81, 71))
+        self.button_send[chat_from_uin].setGeometry(QtCore.QRect(392, 490, 81, 31))
         self.button_send[chat_from_uin].setText(_translate("Chat", "发送", None))
         self.button_send[chat_from_uin].clicked.connect(
             functools.partial(self.sendButtonOnClick, chat_from_uin,flag))
+        # close
+        self.button_close[chat_from_uin] = QtGui.QPushButton(self.page)
+        self.button_close[chat_from_uin].setGeometry(QtCore.QRect(391, 454, 81, 31))
+        self.button_close[chat_from_uin].setText(_translate("Chat", "关闭", None))
+        self.button_close[chat_from_uin].clicked.connect(
+            functools.partial(self.closeButtonOnClick, chat_from_uin,flag))
         # chat
         self.listWidget[chat_from_uin] = QtGui.QListWidget(self.page)
         self.listWidget[chat_from_uin].setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
@@ -202,6 +211,19 @@ class Ui_Chat(object):
             QtCore.QRect(0, 50, 470, 391))
         self.listWidget[chat_from_uin].setSpacing(3)
         return self.page
+    def closeButtonOnClick(self,uin,flag):
+        print 'close,',uin
+        if len(self.stackedWidget)>1:
+            self.stackedWidget.setCurrentIndex(0)
+            self.stackedWidget.removeWidget(self.stack[uin])
+            self.stack[uin]=None
+            self.listWidget[uin]=QtGui.QListWidget(self.page)
+            self.listWidget_Users.removeItemWidget(self.item_widget[uin])
+            self.listWidget_Users.takeItem(self.listWidget_Users.row(self.item_widget[uin]))
+            self.sideButton[uin]=None
+            print 'remove'
+        
+        
     def sendButtonOnClick(self,uin,flag):
         print 'ready to send msg'
         msg=u'{0}'.format(self.textEdit[uin].toPlainText ()).replace(b'\n',b' ')

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'gui/guiChat.ui'
 #
-# Created: Fri Feb 27 15:12:35 2015
+# Created: Tue Mar  3 21:36:59 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -104,7 +104,7 @@ class Ui_Chat(object):
         self.textEdit.setGeometry(QtCore.QRect(0, 450, 391, 71))
         self.textEdit.setObjectName(_fromUtf8("textEdit"))
         self.pushButton_3 = QtGui.QPushButton(self.page)
-        self.pushButton_3.setGeometry(QtCore.QRect(392, 450, 81, 71))
+        self.pushButton_3.setGeometry(QtCore.QRect(392, 490, 81, 31))
         self.pushButton_3.setObjectName(_fromUtf8("pushButton_3"))
         self.scrollArea = QtGui.QScrollArea(self.page)
         self.scrollArea.setGeometry(QtCore.QRect(0, 50, 471, 391))
@@ -158,10 +158,13 @@ class Ui_Chat(object):
         self.page_3.setObjectName(_fromUtf8("page_3"))
         self.toolBox.addItem(self.page_3, _fromUtf8(""))
         self.page_4 = QtGui.QWidget()
-        self.page_4.setGeometry(QtCore.QRect(0, 0, 64, 64))
+        self.page_4.setGeometry(QtCore.QRect(0, 0, 100, 30))
         self.page_4.setObjectName(_fromUtf8("page_4"))
         self.toolBox.addItem(self.page_4, _fromUtf8(""))
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+        self.pushButton_4 = QtGui.QPushButton(self.page)
+        self.pushButton_4.setGeometry(QtCore.QRect(390, 454, 81, 31))
+        self.pushButton_4.setObjectName(_fromUtf8("pushButton_4"))
         self.stackedWidget.addWidget(self.page)
         self.page_2 = QtGui.QWidget()
         self.page_2.setObjectName(_fromUtf8("page_2"))
@@ -189,4 +192,5 @@ class Ui_Chat(object):
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">你好啊,<img src=\"/home/younfor/project/PyLinuxQQ/tmp/head/qq.jpg\" />,嘿嘿</p></body></html>", None))
         self.toolBox.setItemText(self.toolBox.indexOf(self.page_3), _translate("Chat", "Page 1", None))
         self.toolBox.setItemText(self.toolBox.indexOf(self.page_4), _translate("Chat", "Page 2", None))
+        self.pushButton_4.setText(_translate("Chat", "关闭", None))
 
