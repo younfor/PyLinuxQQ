@@ -67,9 +67,11 @@ class Ui_Main(object):
         self.tabWidget.setTabShape(QtGui.QTabWidget.Rounded)
         # 会话
         self.tab = QtGui.QWidget()
-        self.listWidget = QtGui.QListWidget(self.tab)
-        self.listWidget.setGeometry(QtCore.QRect(0, 11, 261, 351))
+        self.listWidget_recent = QtGui.QListWidget(self.tab)
+        self.listWidget_recent.setGeometry(QtCore.QRect(0, 11, 261, 351))
         self.tabWidget.addTab(self.tab, _fromUtf8("    会   话   "))
+        self.graphicsView_recent={}
+        QtCore.QObject.connect(self.listWidget_recent, QtCore.SIGNAL(_fromUtf8("itemDoubleClicked(QListWidgetItem*)")), self.itemOnDoubleClickedRecent)
         # 好友
         self.tab_2 = QtGui.QWidget()
         self.scrollArea = QtGui.QScrollArea(self.tab_2)
@@ -129,6 +131,18 @@ class Ui_Main(object):
             scene.addItem(item)
             self.graphicsView[data['friends'][i]['uin']].setScene(scene)
             self.graphicsView[data['friends'][i]['uin']].resize(50,50)
+    def itemOnDoubleClickedRecent(self,item):
+        print 'double itemDoubleClicked Recent'
+        print item.listWidget().itemWidget(item)
+        widget=item.listWidget().itemWidget(item)
+        uin_type=widget.property('uin').toString().split(':')
+        print uin_type
+        uin=int(uin_type[0])
+        flag=int(uin_type[1])
+        chat=self.main.chat.ui
+        chat.createMsg(self,uin,None,flag)
+        chat.stackedWidget.setCurrentWidget(chat.stack[uin])
+        self.main.chat.showNormal()
     def itemOnDoubleClickedGroup(self,item):
         print 'double itemDoubleClicked Group'
         print item.listWidget().itemWidget(item)
@@ -163,13 +177,20 @@ class Ui_Main(object):
         pixmap = QtGui.QPixmap()
         if flag=='discuss':
             url='tmp/sys/discuss.png'
-        if flag=='group':
+        elif flag=='group':
             url='tmp/sys/group.jpg'
+        else:
+            url='tmp/head/'+str(uin)+'.jpg'
         pixmap.load(url)
         scene = QtGui.QGraphicsScene()
         item = QtGui.QGraphicsPixmapItem(pixmap)
         scene.addItem(item)
         return scene
+    def setupRecent(self,data):
+        print 'load recent'
+        for i in range(len(data)-1):
+            item,widget=self.createWidget_recent(self.listWidget_recent,data[i]['uin'],data[i]['type'])
+            self.listWidget_recent.setItemWidget(item, widget)
     def setupGroup(self,data):
         print 'group' 
         self.groupdict={}
@@ -267,6 +288,29 @@ class Ui_Main(object):
     def onToolBoxChanged(self,index):
         self.toolBox.resize(QtCore.QSize(250,self.toolsize[index]*48+len(self.toolsize)*34))
     
+    def createWidget_recent(self,listWidget,uin,flag):
+        self.listWidgetItem = QtGui.QListWidgetItem(listWidget)
+        self.listWidgetItem.setSizeHint(QtCore.QSize(0, 48))
+        self.widget = QtGui.QWidget()
+        self.widget.setProperty('uin',str(uin)+':'+str(flag))
+        self.widget.setGeometry(QtCore.QRect(0, 0, 238, 51))
+        self.graphicsView_recent[uin] = QtGui.QGraphicsView(self.widget)
+        self.graphicsView_recent[uin].setGeometry(QtCore.QRect(1, 1, 60, 60))
+        if flag==0:
+            self.graphicsView_recent[uin].setScene(self.createImg('user',uin))
+            title=self.userdict[uin]['nickname']
+        if flag==1:
+            title=self.groupdict[uin]['name']
+            self.graphicsView_recent[uin].setScene(self.createImg('group',uin))
+        if flag==2:
+            title=self.discussdict[uin]['name']
+            self.graphicsView_recent[uin].setScene(self.createImg('discuss',uin))
+        self.graphicsView_recent[uin].resize(50,50)
+        self.lbl_title = QtGui.QLabel(self.widget)
+        self.lbl_title.setGeometry(QtCore.QRect(60, 10, 181, 18))
+        self.lbl_title.setFont(self.font2)
+        self.lbl_title.setText(_translate("Main", title, None))
+        return self.listWidgetItem, self.widget
     def createWidget_group(self,listWidget,title,guin,flag):
         self.listWidgetItem = QtGui.QListWidgetItem(listWidget)
         self.listWidgetItem.setSizeHint(QtCore.QSize(0, 48))

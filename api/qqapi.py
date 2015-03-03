@@ -189,6 +189,16 @@ class PyLinuxQQ(object):
             'Referer', 'http://s.web2.qq.com/proxy.html?v=20130916001&callback=1&id=1')
         data = json.load(urllib2.urlopen(req))
         return data['result']
+    def get_recent(self):
+        url_post = 'http://d.web2.qq.com/channel/get_recent_list2'
+        data_post = {
+            'r': '{"vfwebqq":"' + self.newvfwebqq + '","clientid":"' + self.clientid + '","psessionid":"' + self.psessionid + '"}'
+        }
+        req = urllib2.Request(url_post, data=urllib.urlencode(data_post))
+        req.add_header(
+            'Referer', 'http://d.web2.qq.com/proxy.html?v=20130916001&callback=1&id=2')
+        data = json.load(urllib2.urlopen(req))
+        return data['result']
     def get_discuss(self):
         url='http://s.web2.qq.com/api/get_discus_list?clientid='+self.clientid+'&psessionid='+self.psessionid+'&vfwebqq='+self.newvfwebqq+'&t=1425137995649'
         req=urllib2.Request(url)

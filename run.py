@@ -18,6 +18,7 @@ opened = False
 data_friends = None
 data_group = None
 data_discuss = None
+data_recent = None
 account = None
 lnick = None
 online = None
@@ -37,6 +38,12 @@ def load_discuss(main):
     global data_discuss
     data_discuss = qq.get_discuss()
     main.signal.emit(6)
+
+
+def load_recent(main):
+    global data_recent
+    data_recent = qq.get_recent()
+    main.signal.emit(8)
 
 
 def load_friend(main):
@@ -77,10 +84,10 @@ def load_data(main):
     qq.get_infoHash()
     # get friends
     thread.start_new_thread(load_friend, (main,))
-    # get group
-    thread.start_new_thread(load_group, (main,))
     # get discuss
     thread.start_new_thread(load_discuss, (main,))
+    # get group
+    thread.start_new_thread(load_group, (main,))
     # get selfinfo
     thread.start_new_thread(load_self, (main,))
 
@@ -127,10 +134,14 @@ class qqMain(QtGui.QMainWindow, QtCore.QObject):
         self.chat = qqchat
         if arg == 0:
             self.ui.setupFriend(data_friends, online)
+            # get recent
+            thread.start_new_thread(load_recent, (self,))
         if arg == 2:
             self.ui.setupGroup(data_group)
         if arg == 6:
             self.ui.setupDiscuss(data_discuss)
+        if arg == 8:
+            self.ui.setupRecent(data_recent)
         if arg == 1:
             self.ui.setupFace(self, data_friends)
         if arg == 3:
@@ -257,11 +268,11 @@ class qqLogin(QtGui.QMainWindow, QtCore.QObject):
 
 
 def sendMsg(uin, msg, flag):
-    if flag==0:
+    if flag == 0:
         qq.send_msg(uin, msg)
-    if flag==1:
+    if flag == 1:
         qq.send_group_msg(uin, msg)
-    if flag==2:
+    if flag == 2:
         qq.send_discuss_msg(uin, msg)
 
 
