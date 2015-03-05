@@ -1,5 +1,8 @@
 # coding=utf-8
 from PyQt4 import QtCore, QtGui
+from PyQt4.QtGui import *
+from PyQt4.Qt import *
+from PyQt4.QtCore import *
 from gui.guiQQ import Ui_login
 from gui.guiMainQQ import Ui_Main
 from gui.guiChatQQ import Ui_Chat
@@ -128,6 +131,26 @@ class qqMain(QtGui.QMainWindow, QtCore.QObject):
         self.show()
         thread.start_new_thread(load_data, (self,))
         thread.start_new_thread(load_msg, (self,))
+        # trayicon
+        self.trayicon = QtGui.QSystemTrayIcon(self)
+        self.trayicon.setIcon(QtGui.QIcon(r'tmp/sys/QQ.png'))
+        self.trayicon.setToolTip(u' QQ ')
+        self.trayicon.show()
+        self.trayicon.activated.connect(self.trayclick)
+        # traymenu
+        self.min = QAction(u' 最小化 ', self, triggered=self.hide)
+        self.Hy = QAction(u' 还原 ', self, triggered=self.showNormal)
+        self.qiuct = QAction(u' 退出 ', self, triggered=qApp.quit)
+        self.traymen = QMenu(QApplication.desktop())
+        self.traymen.addAction(self.min)
+        self.traymen.addAction(self.Hy)
+        self.traymen.addAction(self.qiuct)
+        self.trayicon.setContextMenu(self.traymen)
+        self.trayicon.activated.connect(self.trayclick)
+
+    def trayclick(self, res):
+        if res == QSystemTrayIcon.DoubleClick:
+            self.showNormal()
 
     def execute(self, arg):
         global opened, qqchat
@@ -144,6 +167,7 @@ class qqMain(QtGui.QMainWindow, QtCore.QObject):
             self.ui.setupRecent(data_recent)
         if arg == 1:
             self.ui.setupFace(self, data_friends)
+            self.ui.setupFace_recent(self,data_recent)
         if arg == 3:
             self.ui.setupSelf(self, account, lnick)
         if arg == 4:
@@ -314,6 +338,7 @@ class qqChat(QtGui.QMainWindow, QtCore.QObject):
         return result
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
+    QtGui.QApplication.setQuitOnLastWindowClosed(False)
     qqlogin = qqLogin()
     qqchat = qqChat()
     sys.exit(app.exec_())

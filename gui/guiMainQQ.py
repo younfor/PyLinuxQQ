@@ -131,6 +131,12 @@ class Ui_Main(object):
             scene.addItem(item)
             self.graphicsView[data['friends'][i]['uin']].setScene(scene)
             self.graphicsView[data['friends'][i]['uin']].resize(50,50)
+    def setupFace_recent(self,main,data):
+        print 'load recent'
+        if data is not None:
+            for i in range(len(data)-1):
+                if data[i]['type']==0:
+                    self.graphicsView_recent[data[i]['uin']].setScene(self.createImg('user',data[i]['uin']))
     def itemOnDoubleClickedRecent(self,item):
         print 'double itemDoubleClicked Recent'
         print item.listWidget().itemWidget(item)
@@ -181,6 +187,8 @@ class Ui_Main(object):
             url='tmp/sys/group.jpg'
         else:
             url='tmp/head/'+str(uin)+'.jpg'
+            if not os.path.exists(url):
+                url='tmp/head/qq.jpg'
         pixmap.load(url)
         scene = QtGui.QGraphicsScene()
         item = QtGui.QGraphicsPixmapItem(pixmap)
