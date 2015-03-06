@@ -17,6 +17,8 @@ qq = PyLinuxQQ('', '')
 qqmain = None
 qqchat = None
 opened = False
+trayhead = 'tmp/sys/QQ.png'
+traymsg = False
 # data
 data_friends = None
 data_group = None
@@ -96,7 +98,7 @@ def load_data(main):
 
 
 def load_msg(main):
-    global message, g_message, d_message
+    global message, g_message, d_message, trayhead, traymsg
     while True:
         time.sleep(0.3)
         data = qq.get_poll()
@@ -104,18 +106,36 @@ def load_msg(main):
             print 'msg coming'
             if data[0]['poll_type'] == 'message':
                 print 'user message'
+                traymsg = True
                 message = data[0]['value']
+                trayhead = 'tmp/head/' + \
+                    str(data[0]['value']['from_uin']) + '.jpg'
                 main.signal.emit(4)
             if data[0]['poll_type'] == 'group_message':
                 print 'group_message'
+                traymsg = True
                 g_message = data[0]['value']
+                trayhead = 'tmp/sys/group.jpg'
                 main.signal.emit(5)
             if data[0]['poll_type'] == 'discu_message':
                 print 'discu_message'
+                traymsg = True
                 d_message = data[0]['value']
+                trayhead = 'tmp/sys/discuss.png'
                 main.signal.emit(7)
         else:
             print 'msg none'
+
+
+def load_tray(main):
+    global traymsg
+    while True:
+        main.signal.emit(9)
+        time.sleep(1)
+        if traymsg == True:
+            print 'head', trayhead
+            main.signal.emit(10)
+            time.sleep(1)
 
 
 class qqMain(QtGui.QMainWindow, QtCore.QObject):
@@ -147,13 +167,23 @@ class qqMain(QtGui.QMainWindow, QtCore.QObject):
         self.traymen.addAction(self.qiuct)
         self.trayicon.setContextMenu(self.traymen)
         self.trayicon.activated.connect(self.trayclick)
+        self.trayflash()
 
     def trayclick(self, res):
+        global traymsg, trayhead
         if res == QSystemTrayIcon.DoubleClick:
             self.showNormal()
+        if res == QSystemTrayIcon.Trigger:
+            print 'click', trayhead, traymsg
+            qqchat.show()
+            traymsg = False
+            trayhead = 'tmp/sys/QQ.png'
+
+    def trayflash(self):
+        thread.start_new_thread(load_tray, (self, ))
 
     def execute(self, arg):
-        global opened, qqchat
+        global opened, qqchat, trayhead
         self.chat = qqchat
         if arg == 0:
             self.ui.setupFriend(data_friends, online)
@@ -167,7 +197,7 @@ class qqMain(QtGui.QMainWindow, QtCore.QObject):
             self.ui.setupRecent(data_recent)
         if arg == 1:
             self.ui.setupFace(self, data_friends)
-            self.ui.setupFace_recent(self,data_recent)
+            self.ui.setupFace_recent(self, data_recent)
         if arg == 3:
             self.ui.setupSelf(self, account, lnick)
         if arg == 4:
@@ -176,6 +206,12 @@ class qqMain(QtGui.QMainWindow, QtCore.QObject):
             self.ui.openChat(self, opened, qqchat, g_message, 1)
         if arg == 7:
             self.ui.openChat(self, opened, qqchat, d_message, 2)
+        if arg == 9:
+            print trayhead
+            self.trayicon.setIcon(QtGui.QIcon(trayhead))
+        if arg == 10:
+            print '10'
+            self.trayicon.setIcon(QtGui.QIcon())
 
     def loadFace(self, id):
         qq.get_happyface(id)

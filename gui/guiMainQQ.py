@@ -386,9 +386,11 @@ class Ui_Main(object):
         to_uin: 28762822
         '''
         # flag 0qq, 1group, 2discuss
+        '''
         if opened==False:
             opened==True
             qqchat.show()
+        '''
         chat_from_uin=msg['from_uin']
         chat_msg=''
         for i in range(1,len(msg['content'])):
