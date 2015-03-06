@@ -131,11 +131,15 @@ def load_msg(main):
 def load_tray(main):
     global traymsg
     while True:
-        main.signal.emit(9)
-        time.sleep(0.5)
+        
         if traymsg == True:
+            main.signal.emit(9)
+            time.sleep(0.5)
             main.signal.emit(10)
             time.sleep(0.5)
+        else:
+            time.sleep(2)
+            main.signal.emit(9)
 
 
 class qqMain(QtGui.QMainWindow, QtCore.QObject):
