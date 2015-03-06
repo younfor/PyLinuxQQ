@@ -1,1 +1,1 @@
-python /home/younfor/project/PyLinuxQQ/run.py
+./dist/run/run
