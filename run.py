@@ -80,6 +80,7 @@ def load_face(main, count, i):
         if size % count == i:
             qq.get_face(str(user['uin']))
             print 'loadding face..', user['uin']
+            main.signal.emit(1)
     main.signal.emit(1)
 
 
@@ -173,8 +174,8 @@ class qqMain(QtGui.QMainWindow, QtCore.QObject):
         if res == QSystemTrayIcon.DoubleClick:
             self.showNormal()
         if res == QSystemTrayIcon.Trigger:
-            #print 'click', trayhead, traymsg
-            qqchat.show()
+            # print 'click', trayhead, traymsg
+            qqchat.showNormal()
             traymsg = False
             trayhead = 'tmp/sys/QQ.png'
 
