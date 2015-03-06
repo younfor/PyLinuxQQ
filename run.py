@@ -131,11 +131,10 @@ def load_tray(main):
     global traymsg
     while True:
         main.signal.emit(9)
-        time.sleep(1)
+        time.sleep(0.5)
         if traymsg == True:
-            print 'head', trayhead
             main.signal.emit(10)
-            time.sleep(1)
+            time.sleep(0.5)
 
 
 class qqMain(QtGui.QMainWindow, QtCore.QObject):
@@ -174,7 +173,7 @@ class qqMain(QtGui.QMainWindow, QtCore.QObject):
         if res == QSystemTrayIcon.DoubleClick:
             self.showNormal()
         if res == QSystemTrayIcon.Trigger:
-            print 'click', trayhead, traymsg
+            #print 'click', trayhead, traymsg
             qqchat.show()
             traymsg = False
             trayhead = 'tmp/sys/QQ.png'
